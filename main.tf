@@ -41,7 +41,7 @@ resource "google_compute_image" "es6-gce-discovery-image" {
   name = "es6-gce-discovery-image"
 
   raw_disk {
-    source = "https://storage.googleapis.com/ackee-images/es6-gce-discovery-disk-latest.tar.gz"
+    source = "${var.raw_image_source}"
   }
   timeouts {
     create = "10m"

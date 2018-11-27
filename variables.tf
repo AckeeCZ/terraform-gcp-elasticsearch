@@ -1,8 +1,5 @@
 variable "project" {}
 variable "zone" {}
-variable "mem" {
-	default = "2g"
-}
 variable "instance_name" {}
 variable "cluster_ipv4_cidr" {}
 
@@ -13,3 +10,6 @@ variable "heap_size" {
   default = "1800m"
 }
 variable "cluster_name" {}
+variable "raw_image_source" {
+  default = "https://storage.googleapis.com/ackee-images/es6-gce-discovery-disk-latest.tar.gz"
+}
