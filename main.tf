@@ -37,8 +37,8 @@ data "template_file" "log4jproperties" {
   template = "${file("${path.module}/log4j.properties.tpl")}"
 }
 
-resource "google_compute_image" "es6-gce-discovery-image" {
-  name = "es6-gce-discovery-image"
+resource "google_compute_image" "es6-image" {
+  name = "es6-image"
 
   raw_disk {
     source = "${var.raw_image_source}"
@@ -60,7 +60,7 @@ resource "google_compute_instance" "es_instance" {
 
   boot_disk {
     initialize_params {
-      image = "${google_compute_image.es6-gce-discovery-image.self_link}"
+      image = "${google_compute_image.es6-image.self_link}"
       type = "pd-ssd"
       size = "30"
     }
