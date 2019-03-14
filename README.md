@@ -1,16 +1,16 @@
 # Ackee GCE Elasticsearch Terraform module
 
-This module is primary written for provisioning of GCE instance from our ES image (https://github.com/AckeeDevOps/packer-elasticsearch)
+This module is primary written for provisioning of GCE instance from our ES image (https://github.com/AckeeCZ/packer-elasticsearch)
 
 It does a few things :
 * Generates GCP IAM Service Account with Storage Admin role for backups and insert it into ES keystore
-* Downloads RAW disk from GCS and create an image from it. (you can generate your own image with Packer using https://github.com/AckeeDevOps/packer-elasticsearch)
+* Downloads RAW disk from GCS and create an image from it. (you can generate your own image with Packer using https://github.com/AckeeCZ/packer-elasticsearch)
 * Create SSH key for instance provisioning
 * Create (GCP) firewall rules so GKE "gateway" pods can reach GCE cluster
 
 ## Configuration
 
-https://github.com/AckeeDevOps/terraform-elasticsearch/blob/master/variables.tf explanation  (followed by default values if applicable) :
+https://github.com/AckeeCZ/terraform-elasticsearch/blob/master/variables.tf explanation  (followed by default values if applicable) :
 
 * project - name of GCP project
 * zone - zone of GCP project
@@ -26,7 +26,7 @@ https://github.com/AckeeDevOps/terraform-elasticsearch/blob/master/variables.tf 
 
 ```hcl
 module "es-prod" {
-  source = "github.com/AckeeDevOps/terraform-elasticsearch?ref=v1.0.0"
+  source = "github.com/AckeeCZ/terraform-elasticsearch?ref=v1.0.0"
   project = "my-gcp-project"
   zone = "europe-west3-c"
   instance_name = "redis-prod"
