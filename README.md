@@ -19,4 +19,21 @@ https://github.com/AckeeDevOps/terraform-elasticsearch/blob/master/variables.tf 
 * node_count:1 - number of ES nodes to deploy
 * heap_size:2g - heap size setting for ES
 * cluster_name - ES cluster name
-* raw_image_source -  URL of tar archive containing RAW source for ES image
+* raw_image_source -  URL of tar archive containing RAW source for ES image (you can use Packer image template to generate image, as mentioned above)
+
+
+## Usage
+
+```hcl
+module "es-prod" {
+  source = "github.com/AckeeDevOps/terraform-elasticsearch?ref=v1.0.0"
+  project = "my-gcp-project"
+  zone = "europe-west3-c"
+  instance_name = "redis-prod"
+  cluster_ipv4_cidr = "10.123.0.0/14"
+  count = "3"
+  heap_size = "1500m"
+  raw_image_source = "https://storage.googleapis.com/image-bucket/ackee-es6.4-disk-latest.tar.gz"
+}
+
+```
