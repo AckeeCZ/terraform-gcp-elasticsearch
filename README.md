@@ -31,7 +31,7 @@ module "es-prod" {
   zone = "europe-west3-c"
   instance_name = "redis-prod"
   cluster_ipv4_cidr = "10.123.0.0/14"
-  count = "3"
+  node_count = "3"
   heap_size = "1500m"
   raw_image_source = "https://storage.googleapis.com/image-bucket/ackee-es6.4-disk-latest.tar.gz"
 }
