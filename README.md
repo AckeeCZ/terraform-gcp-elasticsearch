@@ -29,7 +29,7 @@ module "es-prod" {
   source = "github.com/AckeeCZ/terraform-elasticsearch?ref=v1.0.0"
   project = "my-gcp-project"
   zone = "europe-west3-c"
-  instance_name = "redis-prod"
+  instance_name = "elasticsearch-prod"
   cluster_ipv4_cidr = "10.123.0.0/14"
   node_count = "3"
   heap_size = "1500m"
