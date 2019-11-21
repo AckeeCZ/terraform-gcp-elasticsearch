@@ -1,3 +1,11 @@
+provider "google" {
+  version = "2.17.0"
+}
+
+provider "tls" {
+  version = "2.1.0"
+}
+
 resource "google_service_account" "elasticsearch_backup" {
   account_id   = "elasticsearch-backup"
   display_name = "elasticsearch-backup"
