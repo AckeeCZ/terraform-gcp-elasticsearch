@@ -25,7 +25,7 @@ https://github.com/AckeeCZ/terraform-elasticsearch/blob/master/variables.tf expl
 ## Usage
 
 ```hcl
-module "es-prod" {
+module "elasticsearch_prod" {
   source = "github.com/AckeeCZ/terraform-elasticsearch?ref=v1.0.0"
   project = "my-gcp-project"
   zone = "europe-west3-c"
