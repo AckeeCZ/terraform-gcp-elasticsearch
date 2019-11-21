@@ -10,12 +10,12 @@ path:
   logs: /var/log/elasticsearch
 
 bootstrap:
-  memory_lock: $${MEMORY_LOCK:true}
+  memory_lock: true
 
 http:
   cors:
-    enabled: $${HTTP_CORS_ENABLE:true}
-    allow-origin: $${HTTP_CORS_ALLOW_ORIGIN:*}
+    enabled: true
+    allow-origin: "*"
 
 cloud.gce.project_id: ${project}
 cloud.gce.zone: ${zone}
