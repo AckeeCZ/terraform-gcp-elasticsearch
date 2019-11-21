@@ -1,12 +1,6 @@
 cluster:
   name: ${cluster_name}
 
-node:
-  master: $${ES_MASTER:true}
-  data: $${ES_DATA:true}
-  name: $${HOSTNAME}
-  ingest: $${ES_INGEST:true}
-
 processors: $${PROCESSORS:1}
 
 network.host: _site_,_lo_
@@ -19,8 +13,6 @@ bootstrap:
   memory_lock: $${MEMORY_LOCK:true}
 
 http:
-  enabled: $${HTTP_ENABLED:true}
-  compression: true
   cors:
     enabled: $${HTTP_CORS_ENABLE:true}
     allow-origin: $${HTTP_CORS_ALLOW_ORIGIN:*}
