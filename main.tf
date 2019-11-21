@@ -15,28 +15,6 @@ resource "google_service_account_key" "es-backup-sa-key" {
   service_account_id = google_service_account.es-backup-sa.name
 }
 
-data "template_file" "elasticsearch_config" {
-  template = file("${path.module}/elasticsearch.yml.tpl")
-
-  vars = {
-    project      = var.project
-    zone         = var.zone
-    cluster_name = var.cluster_name
-  }
-}
-
-data "template_file" "jvm_options" {
-  template = file("${path.module}/jvm.options.tpl")
-
-  vars = {
-    heap_size = var.heap_size
-  }
-}
-
-data "template_file" "log4jproperties" {
-  template = file("${path.module}/log4j.properties.tpl")
-}
-
 resource "google_compute_image" "es6-image" {
   name = "es6-image"
 
@@ -84,7 +62,7 @@ resource "google_compute_instance" "es_instance" {
   }
 
   provisioner "file" {
-    content     = data.template_file.elasticsearch_config.rendered
+    content     = templatefile("${path.module}/elasticsearch.yml.tpl", { project = var.project, zone = var.zone, cluster_name = var.cluster_name })
     destination = "/tmp/elasticsearch.yml"
 
     connection {
@@ -97,7 +75,7 @@ resource "google_compute_instance" "es_instance" {
   }
 
   provisioner "file" {
-    content     = data.template_file.jvm_options.rendered
+    content     = templatefile("${path.module}/jvm.options.tpl", { heap_size = var.heap_size })
     destination = "/tmp/jvm.options"
 
     connection {
@@ -121,18 +99,6 @@ resource "google_compute_instance" "es_instance" {
       agent       = false
     }
   }
-
-  /* provisioner "file" {
-    content     = "${data.template_file.log4jproperties.rendered}"
-    destination = "/tmp/log4j2.properties"
-
-    connection {
-      type        = "ssh"
-      user        = "devops"
-      private_key = "${tls_private_key.provision_key.private_key_pem}"
-      agent       = false
-    }
-  } */
 
   provisioner "remote-exec" {
     connection {
