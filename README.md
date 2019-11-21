@@ -30,6 +30,7 @@ module "es-prod" {
   project = "my-gcp-project"
   zone = "europe-west3-c"
   instance_name = "elasticsearch-prod"
+  cluster_name = "elasticsearch"
   cluster_ipv4_cidr = "10.123.0.0/14"
   node_count = "3"
   heap_size = "1500m"
