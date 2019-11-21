@@ -1,8 +1,6 @@
 cluster:
   name: ${cluster_name}
 
-processors: $${PROCESSORS:1}
-
 network.host: _site_,_lo_
 
 path:
