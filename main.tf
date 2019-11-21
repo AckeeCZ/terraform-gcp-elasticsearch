@@ -75,19 +75,6 @@ resource "google_compute_instance" "es_instance" {
   }
 
   provisioner "file" {
-    content     = templatefile("${path.module}/jvm.options.tpl", { heap_size = var.heap_size })
-    destination = "/tmp/jvm.options"
-
-    connection {
-      host        = "${google_compute_instance.es_instance[count.index].network_interface.0.access_config.0.nat_ip}"
-      type        = "ssh"
-      user        = "devops"
-      private_key = tls_private_key.provision_key.private_key_pem
-      agent       = false
-    }
-  }
-
-  provisioner "file" {
     content     = base64decode(google_service_account_key.es-backup-sa-key.private_key)
     destination = "/tmp/backup-sa.key"
 
@@ -111,7 +98,7 @@ resource "google_compute_instance" "es_instance" {
 
     inline = [
       "sudo mv /tmp/elasticsearch.yml /etc/elasticsearch",
-      "sudo mv /tmp/jvm.options /etc/elasticsearch",
+      "sudo sed -i 's/^\\(-Xm[xs]\\).*/\\1${var.heap_size}/' /etc/elasticsearch/jvm.options",
       "sudo /usr/share/elasticsearch/bin/elasticsearch-keystore add-file gcs.client.default.credentials_file /tmp/backup-sa.key",
       "sudo rm /tmp/backup-sa.key",
       "sudo systemctl start elasticsearch.service",
