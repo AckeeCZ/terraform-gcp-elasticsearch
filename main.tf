@@ -15,8 +15,8 @@ resource "google_service_account_key" "es-backup-sa-key" {
   service_account_id = google_service_account.es-backup-sa.name
 }
 
-resource "google_compute_image" "es6-image" {
-  name = "es6-image"
+resource "google_compute_image" "elasticsearch-image" {
+  name = "elasticsearch-image"
 
   raw_disk {
     source = var.raw_image_source
@@ -36,7 +36,7 @@ resource "google_compute_instance" "es_instance" {
 
   boot_disk {
     initialize_params {
-      image = google_compute_image.es6-image.self_link
+      image = google_compute_image.elasticsearch-image.self_link
       type  = "pd-ssd"
       size  = "30"
     }

@@ -34,7 +34,7 @@ module "es-prod" {
   cluster_ipv4_cidr = "10.123.0.0/14"
   node_count = "3"
   heap_size = "1500m"
-  raw_image_source = "https://storage.googleapis.com/image-bucket/ackee-es6.4-disk-latest.tar.gz"
+  raw_image_source = "https://storage.googleapis.com/image-bucket/ackee-elasticsearch-7-disk-latest.tar.gz"
 }
 
 ```
