@@ -12,14 +12,14 @@ It does a few things :
 
 https://github.com/AckeeCZ/terraform-elasticsearch/blob/master/variables.tf explanation  (followed by default values if applicable) :
 
-* project - name of GCP project
-* zone - zone of GCP project
-* instance_name - base for GCE instances name
-* cluster_ipv4_cidr - IPv4 CIDR of k8s cluster, that will communicate
-* node_count:1 - number of ES nodes to deploy
-* heap_size:2g - heap size setting for ES
-* cluster_name - ES cluster name
-* raw_image_source -  URL of tar archive containing RAW source for ES image (you can use Packer image template to generate image, as mentioned above)
+* `project` - name of GCP project
+* `zone` - zone of GCP project
+* `instance_name` - base for GCE instances name
+* `cluster_ipv4_cidr` - IPv4 CIDR of k8s cluster, that will communicate
+* `node_count:1` - number of ES nodes to deploy
+* `heap_size:2g` - heap size setting for ES
+* `cluster_name` - ES cluster name
+* `raw_image_source` -  URL of tar archive containing RAW source for ES image (you can use Packer image template to generate image, as mentioned above)
 
 
 ## Usage
