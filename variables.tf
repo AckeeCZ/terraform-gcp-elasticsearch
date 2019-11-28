@@ -24,3 +24,9 @@ variable "cluster_name" {
 variable "raw_image_source" {
 }
 
+variable "data_disk_type" {
+  default = "pd-ssd"
+}
+
+variable "data_disk_size" {
+}

@@ -20,6 +20,7 @@ https://github.com/AckeeCZ/terraform-elasticsearch/blob/master/variables.tf expl
 * `heap_size:2g` - heap size setting for ES
 * `cluster_name` - ES cluster name
 * `raw_image_source` -  URL of tar archive containing RAW source for ES image (you can use Packer image template to generate image, as mentioned above)
+* `data_disk_size` - persistent disk size specified in GB
 
 
 ## Usage
@@ -35,6 +36,7 @@ module "elasticsearch_prod" {
   node_count = "3"
   heap_size = "1500m"
   raw_image_source = "https://storage.googleapis.com/image-bucket/ackee-elasticsearch-7-disk-latest.tar.gz"
+  data_disk_size = "10"
 }
 
 ```
