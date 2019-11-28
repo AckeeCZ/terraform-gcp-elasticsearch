@@ -83,7 +83,7 @@ resource "google_compute_instance" "elasticsearch" {
     destination = "/tmp/elasticsearch.yml"
 
     connection {
-      host        = "${google_compute_instance.elasticsearch[count.index].network_interface.0.access_config.0.nat_ip}"
+      host        = "${self.network_interface.0.access_config.0.nat_ip}"
       type        = "ssh"
       user        = "devops"
       private_key = tls_private_key.provision.private_key_pem
@@ -96,7 +96,7 @@ resource "google_compute_instance" "elasticsearch" {
     destination = "/tmp/backup-sa.key"
 
     connection {
-      host        = "${google_compute_instance.elasticsearch[count.index].network_interface.0.access_config.0.nat_ip}"
+      host        = "${self.network_interface.0.access_config.0.nat_ip}"
       type        = "ssh"
       user        = "devops"
       private_key = tls_private_key.provision.private_key_pem
@@ -109,7 +109,7 @@ resource "google_compute_instance" "elasticsearch" {
     destination = "/tmp/bootstrap.sh"
 
     connection {
-      host        = "${google_compute_instance.elasticsearch[count.index].network_interface.0.access_config.0.nat_ip}"
+      host        = "${self.network_interface.0.access_config.0.nat_ip}"
       type        = "ssh"
       user        = "devops"
       private_key = tls_private_key.provision.private_key_pem
@@ -119,7 +119,7 @@ resource "google_compute_instance" "elasticsearch" {
 
   provisioner "remote-exec" {
     connection {
-      host        = "${google_compute_instance.elasticsearch[count.index].network_interface.0.access_config.0.nat_ip}"
+      host        = "${self.network_interface.0.access_config.0.nat_ip}"
       type        = "ssh"
       user        = "devops"
       private_key = tls_private_key.provision.private_key_pem
