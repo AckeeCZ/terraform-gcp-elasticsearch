@@ -1,14 +1,6 @@
 cluster:
   name: ${cluster_name}
 
-node:
-  master: $${ES_MASTER:true}
-  data: $${ES_DATA:true}
-  name: $${HOSTNAME}
-  ingest: $${ES_INGEST:true}
-
-processors: $${PROCESSORS:1}
-
 network.host: _site_,_lo_
 
 path:
@@ -16,14 +8,12 @@ path:
   logs: /var/log/elasticsearch
 
 bootstrap:
-  memory_lock: $${MEMORY_LOCK:true}
+  memory_lock: true
 
 http:
-  enabled: $${HTTP_ENABLED:true}
-  compression: true
   cors:
-    enabled: $${HTTP_CORS_ENABLE:true}
-    allow-origin: $${HTTP_CORS_ALLOW_ORIGIN:*}
+    enabled: true
+    allow-origin: "*"
 
 cloud.gce.project_id: ${project}
 cloud.gce.zone: ${zone}

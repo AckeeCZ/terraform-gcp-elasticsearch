@@ -1,44 +1,30 @@
-resource "google_service_account" "es-backup-sa" {
-  account_id   = "es-backup-sa"
-  display_name = "es-backup-sa"
+provider "google" {
+  version = "2.17.0"
+}
+
+provider "tls" {
+  version = "2.1.0"
+}
+
+resource "google_service_account" "elasticsearch_backup" {
+  account_id   = "elasticsearch-backup"
+  display_name = "elasticsearch-backup"
   project      = var.project
 }
 
 # requires Terraform user to have more privileges than Editor - https://cloud.google.com/resource-manager/docs/access-control-org
-resource "google_project_iam_member" "es-backup-role" {
+resource "google_project_iam_member" "elasticsearch_backup_role" {
   role    = "roles/storage.admin"
-  member  = "serviceAccount:${google_service_account.es-backup-sa.email}"
+  member  = "serviceAccount:${google_service_account.elasticsearch_backup.email}"
   project = var.project
 }
 
-resource "google_service_account_key" "es-backup-sa-key" {
-  service_account_id = google_service_account.es-backup-sa.name
+resource "google_service_account_key" "elasticsearch_backup" {
+  service_account_id = google_service_account.elasticsearch_backup.name
 }
 
-data "template_file" "elasticsearch_config" {
-  template = file("${path.module}/elasticsearch.yml.tpl")
-
-  vars = {
-    project      = var.project
-    zone         = var.zone
-    cluster_name = var.cluster_name
-  }
-}
-
-data "template_file" "jvm_options" {
-  template = file("${path.module}/jvm.options.tpl")
-
-  vars = {
-    heap_size = var.heap_size
-  }
-}
-
-data "template_file" "log4jproperties" {
-  template = file("${path.module}/log4j.properties.tpl")
-}
-
-resource "google_compute_image" "es6-image" {
-  name = "es6-image"
+resource "google_compute_image" "elasticsearch" {
+  name = "elasticsearch-image"
 
   raw_disk {
     source = var.raw_image_source
@@ -48,7 +34,7 @@ resource "google_compute_image" "es6-image" {
   }
 }
 
-resource "google_compute_instance" "es_instance" {
+resource "google_compute_instance" "elasticsearch" {
   name         = "${var.instance_name}-${count.index}"
   machine_type = "n1-standard-1"
   zone         = var.zone
@@ -58,7 +44,7 @@ resource "google_compute_instance" "es_instance" {
 
   boot_disk {
     initialize_params {
-      image = google_compute_image.es6-image.self_link
+      image = google_compute_image.elasticsearch.self_link
       type  = "pd-ssd"
       size  = "30"
     }
@@ -73,8 +59,7 @@ resource "google_compute_instance" "es_instance" {
   }
 
   metadata = {
-    foo      = "bar"
-    ssh-keys = "devops:${tls_private_key.provision_key.public_key_openssh}"
+    ssh-keys = "devops:${tls_private_key.provision.public_key_openssh}"
   }
 
   metadata_startup_script = "systemctl enable elasticsearch.service;"
@@ -84,85 +69,60 @@ resource "google_compute_instance" "es_instance" {
   }
 
   provisioner "file" {
-    content     = data.template_file.elasticsearch_config.rendered
+    content     = templatefile("${path.module}/elasticsearch.yml.tpl", { project = var.project, zone = var.zone, cluster_name = var.cluster_name })
     destination = "/tmp/elasticsearch.yml"
 
     connection {
-      host        = "${google_compute_instance.es_instance[count.index].network_interface.0.access_config.0.nat_ip}"
+      host        = "${google_compute_instance.elasticsearch[count.index].network_interface.0.access_config.0.nat_ip}"
       type        = "ssh"
       user        = "devops"
-      private_key = tls_private_key.provision_key.private_key_pem
+      private_key = tls_private_key.provision.private_key_pem
       agent       = false
     }
   }
 
   provisioner "file" {
-    content     = data.template_file.jvm_options.rendered
-    destination = "/tmp/jvm.options"
-
-    connection {
-      host        = "${google_compute_instance.es_instance[count.index].network_interface.0.access_config.0.nat_ip}"
-      type        = "ssh"
-      user        = "devops"
-      private_key = tls_private_key.provision_key.private_key_pem
-      agent       = false
-    }
-  }
-
-  provisioner "file" {
-    content     = base64decode(google_service_account_key.es-backup-sa-key.private_key)
+    content     = base64decode(google_service_account_key.elasticsearch_backup.private_key)
     destination = "/tmp/backup-sa.key"
 
     connection {
-      host        = "${google_compute_instance.es_instance[count.index].network_interface.0.access_config.0.nat_ip}"
+      host        = "${google_compute_instance.elasticsearch[count.index].network_interface.0.access_config.0.nat_ip}"
       type        = "ssh"
       user        = "devops"
-      private_key = tls_private_key.provision_key.private_key_pem
+      private_key = tls_private_key.provision.private_key_pem
       agent       = false
     }
   }
 
-  /* provisioner "file" {
-    content     = "${data.template_file.log4jproperties.rendered}"
-    destination = "/tmp/log4j2.properties"
-
-    connection {
-      type        = "ssh"
-      user        = "devops"
-      private_key = "${tls_private_key.provision_key.private_key_pem}"
-      agent       = false
-    }
-  } */
-
   provisioner "remote-exec" {
     connection {
-      host        = "${google_compute_instance.es_instance[count.index].network_interface.0.access_config.0.nat_ip}"
+      host        = "${google_compute_instance.elasticsearch[count.index].network_interface.0.access_config.0.nat_ip}"
       type        = "ssh"
       user        = "devops"
-      private_key = tls_private_key.provision_key.private_key_pem
+      private_key = tls_private_key.provision.private_key_pem
       agent       = false
     }
 
     inline = [
       "sudo mv /tmp/elasticsearch.yml /etc/elasticsearch",
-      "sudo mv /tmp/jvm.options /etc/elasticsearch",
+      "sudo sed -i 's/^\\(-Xm[xs]\\).*/\\1${var.heap_size}/' /etc/elasticsearch/jvm.options",
       "sudo /usr/share/elasticsearch/bin/elasticsearch-keystore add-file gcs.client.default.credentials_file /tmp/backup-sa.key",
       "sudo rm /tmp/backup-sa.key",
       "sudo systemctl start elasticsearch.service",
     ]
   }
 
-  //not sure if ok for production
+  # not sure if ok for production
   allow_stopping_for_update = true
 }
 
-resource "tls_private_key" "provision_key" {
+resource "tls_private_key" "provision" {
   algorithm = "RSA"
   rsa_bits  = 4096
 }
 
-resource "google_compute_firewall" "es-allow-cluster" {
-  name     = "es-allow-cluster-${var.instance_name}"
+resource "google_compute_firewall" "elasticsearch_allow_cluster" {
+  name     = "elasticserach-allow-cluster-${var.instance_name}"
   network  = "default"
   priority = "1000"
 
@@ -170,6 +130,7 @@ resource "google_compute_firewall" "es-allow-cluster" {
     protocol = "tcp"
     ports    = ["9200", "9300"]
   }
+
   source_ranges = [var.cluster_ipv4_cidr]
   source_tags   = ["elasticsearch"]
 }
