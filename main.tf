@@ -34,6 +34,14 @@ resource "google_compute_image" "elasticsearch" {
   }
 }
 
+resource "google_compute_disk" "data" {
+  name  = "${var.instance_name}-${count.index}-persistent-data"
+  type  = var.data_disk_type
+  size  = var.data_disk_size
+  zone  = var.zone
+  count = var.node_count
+}
+
 resource "google_compute_instance" "elasticsearch" {
   name         = "${var.instance_name}-${count.index}"
   machine_type = "n1-standard-1"
@@ -46,8 +54,12 @@ resource "google_compute_instance" "elasticsearch" {
     initialize_params {
       image = google_compute_image.elasticsearch.self_link
       type  = "pd-ssd"
-      size  = "30"
+      size  = "10"
     }
+  }
+  attached_disk {
+    source      = "${var.instance_name}-${count.index}-persistent-data"
+    device_name = "elasticpd"
   }
 
   network_interface {
@@ -61,8 +73,6 @@ resource "google_compute_instance" "elasticsearch" {
   metadata = {
     ssh-keys = "devops:${tls_private_key.provision.public_key_openssh}"
   }
-
-  metadata_startup_script = "systemctl enable elasticsearch.service;"
 
   service_account {
     scopes = ["userinfo-email", "compute-ro", "storage-rw", "monitoring-write", "logging-write", "https://www.googleapis.com/auth/trace.append"]
@@ -94,6 +104,19 @@ resource "google_compute_instance" "elasticsearch" {
     }
   }
 
+  provisioner "file" {
+    source      = "${path.module}/bootstrap.sh"
+    destination = "/tmp/bootstrap.sh"
+
+    connection {
+      host        = "${google_compute_instance.elasticsearch[count.index].network_interface.0.access_config.0.nat_ip}"
+      type        = "ssh"
+      user        = "devops"
+      private_key = tls_private_key.provision.private_key_pem
+      agent       = false
+    }
+  }
+
   provisioner "remote-exec" {
     connection {
       host        = "${google_compute_instance.elasticsearch[count.index].network_interface.0.access_config.0.nat_ip}"
@@ -108,7 +131,8 @@ resource "google_compute_instance" "elasticsearch" {
       "sudo sed -i 's/^\\(-Xm[xs]\\).*/\\1${var.heap_size}/' /etc/elasticsearch/jvm.options",
       "sudo /usr/share/elasticsearch/bin/elasticsearch-keystore add-file gcs.client.default.credentials_file /tmp/backup-sa.key",
       "sudo rm /tmp/backup-sa.key",
-      "sudo systemctl start elasticsearch.service",
+      "sudo bash /tmp/bootstrap.sh",
+      "sudo systemctl start elasticsearch.service"
     ]
   }
 
