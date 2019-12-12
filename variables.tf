@@ -1,7 +1,7 @@
 variable "project" {
 }
 
-variable "zone" {
+variable "region" {
 }
 
 variable "instance_name" {

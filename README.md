@@ -29,7 +29,7 @@ https://github.com/AckeeCZ/terraform-elasticsearch/blob/master/variables.tf expl
 module "elasticsearch_prod" {
   source = "github.com/AckeeCZ/terraform-elasticsearch?ref=v1.0.0"
   project = "my-gcp-project"
-  zone = "europe-west3-c"
+  region = "europe-west3"
   instance_name = "elasticsearch-prod"
   cluster_name = "elasticsearch"
   cluster_ipv4_cidr = "10.123.0.0/14"
