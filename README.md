@@ -13,7 +13,8 @@ It does a few things :
 https://github.com/AckeeCZ/terraform-elasticsearch/blob/master/variables.tf explanation  (followed by default values if applicable) :
 
 * `project` - name of GCP project
-* `zone` - zone of GCP project
+* `region` region of GCP project
+* `zone` - zone of GCP project - optional parameter. If not set, the instances will be spread across the available zones.
 * `instance_name` - base for GCE instances name
 * `cluster_ipv4_cidr` - IPv4 CIDR of k8s cluster, that will communicate
 * `node_count:1` - number of ES nodes to deploy
@@ -30,6 +31,7 @@ module "elasticsearch_prod" {
   source = "github.com/AckeeCZ/terraform-elasticsearch?ref=v1.0.0"
   project = "my-gcp-project"
   region = "europe-west3"
+  zone = "europe-west3-c"
   instance_name = "elasticsearch-prod"
   cluster_name = "elasticsearch"
   cluster_ipv4_cidr = "10.123.0.0/14"

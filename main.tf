@@ -39,14 +39,14 @@ resource "google_compute_disk" "data" {
   name  = "${var.instance_name}-${count.index}-persistent-data"
   type  = var.data_disk_type
   size  = var.data_disk_size
-  zone  = data.google_compute_zones.available.names[count.index % local.zone_count]
+  zone  = var.zone != null ? var.zone : data.google_compute_zones.available.names[count.index % local.zone_count]
   count = var.node_count
 }
 
 resource "google_compute_instance" "elasticsearch" {
   name         = "${var.instance_name}-${count.index}"
   machine_type = "n1-standard-1"
-  zone         = data.google_compute_zones.available.names[count.index % local.zone_count]
+  zone         = var.zone != null ? var.zone : data.google_compute_zones.available.names[count.index % local.zone_count]
   count        = var.node_count
 
   tags = ["es", "elasticsearch"]
@@ -80,7 +80,7 @@ resource "google_compute_instance" "elasticsearch" {
   }
 
   provisioner "file" {
-    content     = templatefile("${path.module}/elasticsearch.yml.tpl", { project = var.project, zone = data.google_compute_zones.available.names[count.index % local.zone_count], cluster_name = var.cluster_name })
+    content     = templatefile("${path.module}/elasticsearch.yml.tpl", { project = var.project, zone = var.zone != null ? var.zone : data.google_compute_zones.available.names[count.index % local.zone_count], cluster_name = var.cluster_name })
     destination = "/tmp/elasticsearch.yml"
 
     connection {
