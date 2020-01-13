@@ -4,6 +4,10 @@ variable "project" {
 variable "region" {
 }
 
+variable "zone" {
+  default = null
+}
+
 variable "instance_name" {
 }
 
