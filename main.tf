@@ -82,7 +82,8 @@ resource "google_compute_instance" "elasticsearch" {
   provisioner "file" {
     content = templatefile(
       "${path.module}/elasticsearch.yml.tpl", {
-        project      = var.project, zone = var.zone != null ? var.zone : data.google_compute_zones.available.names[count.index % local.zone_count],
+        project      = var.project,
+        zones        = join(", ", data.google_compute_zones.available.names),
         cluster_name = var.cluster_name,
         nodes = join(", ", [
           for i in range(var.node_count) :
