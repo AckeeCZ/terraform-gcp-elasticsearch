@@ -43,14 +43,13 @@ pre-commit install
 | terraform | >= 0.12 |
 | google | ~> 2.20.0 |
 | google-beta | ~> 3.6 |
-| kubernetes | ~> 1.11.0 |
 
 ## Providers
 
 | Name | Version |
 |------|---------|
 | google | ~> 2.20.0 |
-| kubernetes | ~> 1.11.0 |
+| kubernetes | n/a |
 | tls | n/a |
 
 ## Inputs
@@ -58,20 +57,17 @@ pre-commit install
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
 | cluster\_ipv4\_cidr | IPv4 CIDR of k8s cluster used for ES communication. | `any` | n/a | yes |
-| cluster\_name | ES cluster name. | `any` | n/a | yes |
+| cluster\_name | ES cluster name. | `string` | n/a | yes |
 | data\_disk\_size | Persistent disk size specified in GB. | `any` | n/a | yes |
 | data\_disk\_type | Type of disk used as a persistent storage. | `string` | `"pd-ssd"` | no |
 | heap\_size | Heap size setting for ES. | `string` | `"1800m"` | no |
 | instance\_name | Base for GCE instances name. | `any` | n/a | yes |
-| k8s\_ca\_certificate | K8s CA certificate used for auth to deploy endpoints and services. | `any` | n/a | yes |
-| k8s\_endpoint | K8s endpoint, e.g. IP address or host used to deploy endpoints and services. | `any` | n/a | yes |
+| k8s\_enable | Enable k8s extension to deploy endpoints to cluster members and internal load balancer as a k8s service | `bool` | `false` | no |
 | k8s\_namespace | K8s namespace used to deploy endpoints and services. | `string` | `"production"` | no |
-| k8s\_password | K8s password used to deploy endpoints and services. | `any` | n/a | yes |
-| k8s\_user | K8s user used to deploy endpoints and services. | `any` | n/a | yes |
 | node\_count | Number of ES nodes to deploy. | `string` | `"1"` | no |
-| project | Name of GCP project. | `any` | n/a | yes |
+| project | Name of GCP project. | `string` | n/a | yes |
 | raw\_image\_source | URL of tar archive containing RAW source for ES image (you can use Packer image template to generate image, as mentioned above). | `string` | `"https://storage.googleapis.com/ackee-images/ackee-elasticsearch-7-disk-79.tar.gz"` | no |
-| region | Region of GCP project. | `any` | n/a | yes |
+| region | Region of GCP project. | `string` | n/a | yes |
 | zone | Zone of GCP project - optional parameter, if not set, the instances will be spread across the available zones. | `any` | `null` | no |
 
 ## Outputs

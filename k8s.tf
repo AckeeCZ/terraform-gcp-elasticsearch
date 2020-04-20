@@ -1,4 +1,5 @@
 resource "kubernetes_endpoints" "node" {
+  count = var.k8s_enable ? 1 : 0
 
   metadata {
     name      = "elasticsearch"
@@ -20,9 +21,14 @@ resource "kubernetes_endpoints" "node" {
 }
 
 resource "kubernetes_service" "elasticsearch" {
+  count = var.k8s_enable ? 1 : 0
+
   metadata {
     name      = "elasticsearch"
     namespace = var.k8s_namespace
+    annotations = {
+      "cloud.google.com/load-balancer-type" = "Internal"
+    }
   }
 
   spec {
@@ -32,3 +38,4 @@ resource "kubernetes_service" "elasticsearch" {
     }
   }
 }
+
