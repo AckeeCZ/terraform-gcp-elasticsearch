@@ -3,7 +3,7 @@ resource "kubernetes_endpoints" "node" {
 
   metadata {
     name      = "elasticsearch"
-    namespace = var.k8s_namespace
+    namespace = var.namespace
   }
 
   subset {
@@ -25,7 +25,7 @@ resource "kubernetes_service" "elasticsearch" {
 
   metadata {
     name      = "elasticsearch"
-    namespace = var.k8s_namespace
+    namespace = var.namespace
     annotations = {
       "cloud.google.com/load-balancer-type" = "Internal"
     }

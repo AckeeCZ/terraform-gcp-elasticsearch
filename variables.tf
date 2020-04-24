@@ -54,12 +54,12 @@ variable "data_disk_size" {
 }
 
 variable "k8s_enable" {
-  description = "Enable k8s extension to deploy endpoints to cluster members and internal load balancer as a k8s service"
+  description = "Enable k8s extension to deploy endpoints to cluster members and internal load balancer as a k8s service, use only with k8s provider setup previously"
   type        = bool
   default     = false
 }
 
-variable "k8s_namespace" {
+variable "namespace" {
   default     = "production"
   description = "K8s namespace used to deploy endpoints and services."
   type        = string

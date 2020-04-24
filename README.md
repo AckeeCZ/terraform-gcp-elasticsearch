@@ -62,8 +62,8 @@ pre-commit install
 | data\_disk\_type | Type of disk used as a persistent storage. | `string` | `"pd-ssd"` | no |
 | heap\_size | Heap size setting for ES. | `string` | `"1800m"` | no |
 | instance\_name | Base for GCE instances name. | `any` | n/a | yes |
-| k8s\_enable | Enable k8s extension to deploy endpoints to cluster members and internal load balancer as a k8s service | `bool` | `false` | no |
-| k8s\_namespace | K8s namespace used to deploy endpoints and services. | `string` | `"production"` | no |
+| k8s\_enable | Enable k8s extension to deploy endpoints to cluster members and internal load balancer as a k8s service, use only with k8s provider setup previously | `bool` | `false` | no |
+| namespace | K8s namespace used to deploy endpoints and services. | `string` | `"production"` | no |
 | node\_count | Number of ES nodes to deploy. | `string` | `"1"` | no |
 | project | Name of GCP project. | `string` | n/a | yes |
 | raw\_image\_source | URL of tar archive containing RAW source for ES image (you can use Packer image template to generate image, as mentioned above). | `string` | `"https://storage.googleapis.com/ackee-images/ackee-elasticsearch-7-disk-79.tar.gz"` | no |
