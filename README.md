@@ -8,37 +8,70 @@ It does a few things :
 * Create SSH key for instance provisioning
 * Create (GCP) firewall rules so GKE "gateway" pods can reach GCE cluster
 
-## Configuration
-
-https://github.com/AckeeCZ/terraform-elasticsearch/blob/master/variables.tf explanation  (followed by default values if applicable) :
-
-* `project` - name of GCP project
-* `region` region of GCP project
-* `zone` - zone of GCP project - optional parameter. If not set, the instances will be spread across the available zones.
-* `instance_name` - base for GCE instances name
-* `cluster_ipv4_cidr` - IPv4 CIDR of k8s cluster, that will communicate
-* `node_count:1` - number of ES nodes to deploy
-* `heap_size:2g` - heap size setting for ES
-* `cluster_name` - ES cluster name
-* `raw_image_source` -  URL of tar archive containing RAW source for ES image (you can use Packer image template to generate image, as mentioned above)
-* `data_disk_size` - persistent disk size specified in GB
-
-
 ## Usage
 
 ```hcl
 module "elasticsearch_prod" {
-  source = "github.com/AckeeCZ/terraform-elasticsearch?ref=v1.0.0"
-  project = "my-gcp-project"
-  region = "europe-west3"
-  zone = "europe-west3-c"
-  instance_name = "elasticsearch-prod"
-  cluster_name = "elasticsearch"
-  cluster_ipv4_cidr = "10.123.0.0/14"
-  node_count = "3"
-  heap_size = "1500m"
-  raw_image_source = "https://storage.googleapis.com/image-bucket/ackee-elasticsearch-7-disk-latest.tar.gz"
-  data_disk_size = "10"
+  source            = "github.com/AckeeCZ/terraform-elasticsearch?ref=v5.4.0"
+  project           = "my-gcp-project"
+  region            = "europe-west3"
+  zone              = "europe-west3-c"
+  instance_name     = "elasticsearch-prod"
+  cluster_name      = "elasticsearch"
+  cluster_ipv4_cidr = "10.128.0.0/14"
+  node_count        = "3"
+  heap_size         = "1500m"
+  raw_image_source  = "https://storage.googleapis.com/ackee-images/ackee-elasticsearch-7-disk-79.tar.gz"
+  data_disk_size    = "10"
 }
-
 ```
+
+## Before you do anything in this module
+
+Install pre-commit hooks by running following commands:
+
+```shell script
+brew install pre-commit
+pre-commit install
+```
+
+<!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
+## Requirements
+
+| Name | Version |
+|------|---------|
+| terraform | >= 0.12 |
+| google | ~> 2.20.0 |
+| google-beta | ~> 3.6 |
+
+## Providers
+
+| Name | Version |
+|------|---------|
+| google | ~> 2.20.0 |
+| kubernetes | n/a |
+| tls | n/a |
+
+## Inputs
+
+| Name | Description | Type | Default | Required |
+|------|-------------|------|---------|:--------:|
+| cluster\_ipv4\_cidr | IPv4 CIDR of k8s cluster used for ES communication. | `any` | n/a | yes |
+| cluster\_name | ES cluster name. | `string` | n/a | yes |
+| data\_disk\_size | Persistent disk size specified in GB. | `any` | n/a | yes |
+| data\_disk\_type | Type of disk used as a persistent storage. | `string` | `"pd-ssd"` | no |
+| heap\_size | Heap size setting for ES. | `string` | `"1800m"` | no |
+| instance\_name | Base for GCE instances name. | `any` | n/a | yes |
+| k8s\_enable | Enable k8s extension to deploy endpoints to cluster members and internal load balancer as a k8s service, use only with k8s provider setup previously | `bool` | `false` | no |
+| namespace | K8s namespace used to deploy endpoints and services. | `string` | `"production"` | no |
+| node\_count | Number of ES nodes to deploy. | `string` | `"1"` | no |
+| project | Name of GCP project. | `string` | n/a | yes |
+| raw\_image\_source | URL of tar archive containing RAW source for ES image (you can use Packer image template to generate image, as mentioned above). | `string` | `"https://storage.googleapis.com/ackee-images/ackee-elasticsearch-7-disk-79.tar.gz"` | no |
+| region | Region of GCP project. | `string` | n/a | yes |
+| zone | Zone of GCP project - optional parameter, if not set, the instances will be spread across the available zones. | `any` | `null` | no |
+
+## Outputs
+
+No output.
+
+<!-- END OF PRE-COMMIT-TERRAFORM DOCS HOOK -->

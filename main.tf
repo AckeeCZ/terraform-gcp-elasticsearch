@@ -80,7 +80,13 @@ resource "google_compute_instance" "elasticsearch" {
   }
 
   provisioner "file" {
-    content     = templatefile("${path.module}/elasticsearch.yml.tpl", { project = var.project, zone = var.zone != null ? var.zone : data.google_compute_zones.available.names[count.index % local.zone_count], cluster_name = var.cluster_name })
+    content = templatefile(
+      "${path.module}/elasticsearch.yml.tpl", {
+        project      = var.project,
+        zones        = join(", ", data.google_compute_zones.available.names),
+        cluster_name = var.cluster_name
+      }
+    )
     destination = "/tmp/elasticsearch.yml"
 
     connection {
@@ -95,6 +101,26 @@ resource "google_compute_instance" "elasticsearch" {
   provisioner "file" {
     content     = base64decode(google_service_account_key.elasticsearch_backup.private_key)
     destination = "/tmp/backup-sa.key"
+
+    connection {
+      host        = self.network_interface.0.access_config.0.nat_ip
+      type        = "ssh"
+      user        = "devops"
+      private_key = tls_private_key.provision.private_key_pem
+      agent       = false
+    }
+  }
+
+  provisioner "file" {
+    content = templatefile(
+      "${path.module}/master_list.sh.tpl", {
+        master_list = join(",", [
+          for i in range(var.node_count) :
+          "${var.instance_name}-${i}"
+        ])
+      }
+    )
+    destination = "/home/devops/master_list.sh"
 
     connection {
       host        = self.network_interface.0.access_config.0.nat_ip
