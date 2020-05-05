@@ -173,7 +173,7 @@ resource "tls_private_key" "provision" {
 }
 
 resource "google_compute_firewall" "elasticsearch_allow_cluster" {
-  name     = "elasticserach-allow-cluster-${var.instance_name}"
+  name     = "elasticsearch-allow-cluster-${var.instance_name}"
   network  = "default"
   priority = "1000"
 

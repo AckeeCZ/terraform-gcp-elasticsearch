@@ -41,14 +41,13 @@ pre-commit install
 | Name | Version |
 |------|---------|
 | terraform | >= 0.12 |
-| google | ~> 2.20.0 |
-| google-beta | ~> 3.6 |
+| google | ~> 3.19.0 |
 
 ## Providers
 
 | Name | Version |
 |------|---------|
-| google | ~> 2.20.0 |
+| google | ~> 3.19.0 |
 | kubernetes | n/a |
 | tls | n/a |
 
