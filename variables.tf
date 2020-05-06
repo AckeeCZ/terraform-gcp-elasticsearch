@@ -54,7 +54,7 @@ variable "data_disk_size" {
 }
 
 variable "k8s_enable" {
-  description = "Enable k8s extension to deploy endpoints to cluster members and internal load balancer as a k8s service, use only with k8s provider setup previously"
+  description = "Enable k8s extension to deploy service refering internal load balancer from GCP"
   type        = bool
   default     = false
 }
@@ -62,5 +62,11 @@ variable "k8s_enable" {
 variable "namespace" {
   default     = "production"
   description = "K8s namespace used to deploy endpoints and services."
+  type        = string
+}
+
+variable "network" {
+  description = "GCE VPC used for compute instances"
+  default     = "default"
   type        = string
 }

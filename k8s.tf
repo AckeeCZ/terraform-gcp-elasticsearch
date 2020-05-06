@@ -26,9 +26,6 @@ resource "kubernetes_service" "elasticsearch" {
   metadata {
     name      = "elasticsearch"
     namespace = var.namespace
-    annotations = {
-      "cloud.google.com/load-balancer-type" = "Internal"
-    }
   }
 
   spec {

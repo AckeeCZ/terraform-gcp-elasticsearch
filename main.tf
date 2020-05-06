@@ -64,7 +64,7 @@ resource "google_compute_instance" "elasticsearch" {
   }
 
   network_interface {
-    network = "default"
+    network = var.network
 
     access_config {
       // Ephemeral IP
@@ -174,7 +174,7 @@ resource "tls_private_key" "provision" {
 
 resource "google_compute_firewall" "elasticsearch_allow_cluster" {
   name     = "elasticsearch-allow-cluster-${var.instance_name}"
-  network  = "default"
+  network  = var.network
   priority = "1000"
 
   allow {
@@ -186,3 +186,32 @@ resource "google_compute_firewall" "elasticsearch_allow_cluster" {
   source_tags   = ["elasticsearch"]
 }
 
+resource "google_compute_firewall" "elasticsearch_allow_healthchecks" {
+  priority      = "1000"
+  name          = "gcp-health-check"
+  network       = var.network
+  source_ranges = ["35.191.0.0/16", "130.211.0.0/22"]
+
+  allow {
+    protocol = "tcp"
+  }
+
+  target_tags = ["elasticsearch"]
+  direction   = "INGRESS"
+}
+
+
+resource "google_compute_firewall" "elasticsearch_allow_internal" {
+  priority      = "1000"
+  name          = "gcp-internal-communication"
+  network       = var.network
+  source_ranges = ["0.0.0.0/0"]
+
+  allow {
+    protocol = "tcp"
+    ports    = ["9200", "9300"]
+  }
+
+  target_tags = ["elasticsearch"]
+  direction   = "INGRESS"
+}
