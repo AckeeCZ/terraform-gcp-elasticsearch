@@ -17,23 +17,28 @@ provider "google-beta" {
 }
 
 module "elasticsearch_prod" {
-  source            = "./.."
-  project           = var.project
-  region            = var.region
-  zone              = var.zone
-  instance_name     = "elasticsearch-prod"
-  cluster_name      = "elasticsearch"
-  cluster_ipv4_cidr = module.gke.cluster_ipv4_cidr
-  node_count        = "1"
-  heap_size         = "1500m"
-  raw_image_source  = "https://storage.googleapis.com/ackee-images/ackee-elasticsearch-7-disk-79.tar.gz"
-  data_disk_size    = "10"
-  k8s_enable        = true
+  source           = "./.."
+  project          = var.project
+  region           = var.region
+
+  instance_name    = "elasticsearch-prod"
+  cluster_name     = "elasticsearch"
+  node_count       = 2
+  heap_size        = "1500m"
+  raw_image_source = "https://storage.googleapis.com/ackee-images/ackee-elasticsearch-7-disk-79.tar.gz"
+  data_disk_size   = "10"
+
   namespace         = var.namespace
+  cluster_ipv4_cidr = module.gke.cluster_ipv4_cidr
+
+  cluster_ca_certificate = module.gke.cluster_ca_certificate
+  cluster_user           = module.gke.cluster_username
+  cluster_pass           = module.gke.cluster_password
+  cluster_endpoint       = module.gke.endpoint
 }
 
 module "gke" {
-  source            = "git::ssh://git@gitlab.ack.ee/Infra/terraform-gke-vpc.git?ref=v6.2.0"
+  source            = "git::ssh://git@gitlab.ack.ee/Infra/terraform-gke-vpc.git?ref=v6.4.0"
   namespace         = var.namespace
   project           = var.project
   location          = var.zone
@@ -62,10 +67,10 @@ variable "zone" {
   default = "europe-west3-c"
 }
 
-output "es_dns" {
-  value = module.elasticsearch_prod.elasticsearch_dns
+output "ip_address" {
+  value = module.elasticsearch_prod.ip_address
 }
 
-output "es_ip" {
-  value = module.elasticsearch_prod.ip_address
+output "ilb_dns" {
+  value = module.elasticsearch_prod.ilb_dns
 }

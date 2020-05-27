@@ -20,8 +20,9 @@ resource "google_compute_region_target_http_proxy" "elasticsearch" {
 resource "google_compute_region_url_map" "default" {
   provider = google-beta
 
-  region          = var.region
-  name            = "es-backend-map"
+  region   = var.region
+  # url map name is displayed as load balancer name, this name maybe misleading
+  name            = "es-ilb"
   default_service = google_compute_region_backend_service.elasticsearch.id
 }
 
@@ -33,35 +34,38 @@ resource "google_compute_forwarding_rule" "elasticsearch" {
   allow_global_access    = false
   is_mirroring_collector = false
 
-
   name = "elasticsearch-forwarding-rule"
 
-  network = data.google_compute_network.default.self_link
-
+  network    = data.google_compute_network.default.self_link
   port_range = "80-80"
 
   load_balancing_scheme = "INTERNAL_MANAGED"
   ip_protocol           = "TCP"
 
-  # backend_service = google_compute_region_backend_service.elasticsearch.self_link
   region = var.region
-
   target = google_compute_region_target_http_proxy.elasticsearch.self_link
-}
 
+  # used as DNS reference in internal GCE DNS system, service without label do not get DNS name
+  service_label = "es-ilb"
+}
 
 resource "google_compute_instance_group" "elasticsearch" {
   provider    = google-beta
-  name        = "elasticsearch-instance-pool"
-  description = "Elasticsearch instance pool"
-  zone        = var.zone
+  name        = "elasticsearch-instance-pool-${data.google_compute_zones.available.names[count.index]}"
+  description = "Elasticsearch instance pool ${data.google_compute_zones.available.names[count.index]}"
+  zone        = var.zone != null ? var.zone : data.google_compute_zones.available.names[count.index]
+  count       = var.zone != null ? 1 : var.node_count < local.zone_count ? var.node_count : local.zone_count
 
   instances = [
-    for i in google_compute_instance.elasticsearch : i.self_link
+    for i in google_compute_instance.elasticsearch : i.self_link if
+      data.google_compute_zones.available.names[
+        index(google_compute_instance.elasticsearch, i) % local.zone_count
+      ] == data.google_compute_zones.available.names[count.index]
   ]
 
   named_port {
-    name = "http"  # set here for backend setting purpouses
+    # set here for backend setting purpouses, l7 internal load balancer does not accept any other port name
+    name = "http"
     port = "9200"
   }
 
@@ -99,18 +103,15 @@ resource "google_compute_region_backend_service" "elasticsearch" {
   connection_draining_timeout_sec = 300
   locality_lb_policy              = "ROUND_ROBIN"
 
-
-  backend {
-    balancing_mode        = "RATE"
-    capacity_scaler       = 1
-    failover              = false
-    group                 = google_compute_instance_group.elasticsearch.self_link
-    max_rate_per_instance = 100
-  }
-
-  log_config {
-    enable      = true
-    sample_rate = 1
+  dynamic "backend" {
+    for_each = google_compute_instance_group.elasticsearch
+    content {
+      balancing_mode        = "RATE"
+      capacity_scaler       = 1
+      failover              = false
+      group                 = backend.value.self_link
+      max_rate_per_instance = 100
+    }
   }
 
   health_checks = [google_compute_region_health_check.elasticsearch.self_link]

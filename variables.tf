@@ -11,19 +11,23 @@ variable "region" {
 variable "zone" {
   description = "Zone of GCP project - optional parameter, if not set, the instances will be spread across the available zones."
   default     = null
+  type        = string
 }
 
 variable "instance_name" {
   description = "Base for GCE instances name."
+  type        = string
 }
 
 variable "cluster_ipv4_cidr" {
-  description = "IPv4 CIDR of k8s cluster used for ES communication."
+  description = "IPv4 CIDR of GKE cluster used for ES communication."
+  type        = string
 }
 
 variable "node_count" {
   description = "Number of ES nodes to deploy."
-  default     = "1"
+  default     = 1
+  type        = number
 }
 
 variable "heap_size" {
@@ -51,12 +55,7 @@ variable "data_disk_type" {
 
 variable "data_disk_size" {
   description = "Persistent disk size specified in GB."
-}
-
-variable "k8s_enable" {
-  description = "Enable k8s extension to deploy service refering internal load balancer from GCP"
-  type        = bool
-  default     = false
+  type        = string
 }
 
 variable "namespace" {
@@ -68,5 +67,25 @@ variable "namespace" {
 variable "network" {
   description = "GCE VPC used for compute instances"
   default     = "default"
+  type        = string
+}
+
+variable "cluster_ca_certificate" {
+  description = "Public CA certificate that is the root of trust for the GKE K8s cluster"
+  type        = string
+}
+
+variable "cluster_user" {
+  description = "Cluster master username, keep always secret!"
+  type        = string
+}
+
+variable "cluster_pass" {
+  description = "Cluster master password, keep always secret!"
+  type        = string
+}
+
+variable "cluster_endpoint" {
+  description = "Cluster control plane endpoint"
   type        = string
 }
