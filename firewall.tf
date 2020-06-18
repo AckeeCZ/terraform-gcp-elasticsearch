@@ -33,15 +33,13 @@ resource "google_compute_firewall" "elasticsearch_allow_ilb_traffic" {
   direction   = "INGRESS"
 }
 
-
-resource "google_compute_firewall" "elasticsearch_allow_external_cluster_cidr" {
+resource "google_compute_firewall" "elasticsearch_allow_external_subnets" {
+  for_each = length(var.allowed_ipv4_subnets) > 0 ? {allowed_ipv4_subnets: var.allowed_ipv4_subnets} : {}
   name     = "elasticsearch-gcp-gke-communication"
   network  = var.network
   priority = 1000
 
-  source_ranges = [
-    var.cluster_ipv4_cidr,
-  ]
+  source_ranges = each.value
 
   allow {
     protocol = "tcp"
@@ -51,17 +49,18 @@ resource "google_compute_firewall" "elasticsearch_allow_external_cluster_cidr" {
   direction   = "INGRESS"
 }
 
-
-resource "google_compute_firewall" "elasticsearch_allow_cluster" {
-  name     = "elasticsearch-allow-cluster-${var.instance_name}"
+resource "google_compute_firewall" "elasticsearch_allow_external_tags" {
+  for_each = length(var.allowed_tags) > 0 ? {allowed_tags: var.allowed_tags} : {}
+  name     = "elasticsearch-gcp-gke-communication"
   network  = var.network
   priority = 1000
 
+  source_tags = each.value
+
   allow {
     protocol = "tcp"
-    ports    = ["9200", "9300"]
   }
 
-  source_ranges = [var.cluster_ipv4_cidr]
-  source_tags   = ["elasticsearch"]
+  target_tags = ["elasticsearch"]
+  direction   = "INGRESS"
 }

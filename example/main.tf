@@ -29,7 +29,6 @@ module "elasticsearch_prod" {
   data_disk_size   = "10"
 
   namespace         = var.namespace
-  cluster_ipv4_cidr = module.gke.cluster_ipv4_cidr
 
   cluster_ca_certificate = module.gke.cluster_ca_certificate
   cluster_user           = module.gke.cluster_username

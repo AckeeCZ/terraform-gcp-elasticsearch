@@ -19,9 +19,16 @@ variable "instance_name" {
   type        = string
 }
 
-variable "cluster_ipv4_cidr" {
-  description = "IPv4 CIDR of GKE cluster used for ES communication."
-  type        = string
+variable "allowed_ipv4_subnets" {
+  description = "IPv4 subnets allowed to communicate with ES instances."
+  type        = list(string)
+  default     = []
+}
+
+variable "allowed_tags" {
+  description = "Network tags allowed to communicate with ES instances."
+  type        = list(string)
+  default     = ["k8s"]
 }
 
 variable "node_count" {

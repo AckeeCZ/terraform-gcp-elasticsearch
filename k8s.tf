@@ -1,46 +1,5 @@
 # k8s code resources created mainly for git@github.com:AckeeCZ/goproxie.git compatibility
 
-resource "kubernetes_endpoints" "endpoint" {
-
-  metadata {
-    name      = "elasticsearch-loadbalancer"
-    namespace = var.namespace
-    labels = {
-      app = "elasticsearch-endpoints-loadbalancer"
-    }
-  }
-
-  subset {
-    address {
-      ip = google_compute_forwarding_rule.elasticsearch.ip_address
-    }
-
-    port {
-      port = 80
-    }
-  }
-}
-
-resource "kubernetes_service" "elasticsearch" {
-
-  metadata {
-    name      = "elasticsearch-loadbalancer"
-    namespace = var.namespace
-  }
-
-  spec {
-    type = "NodePort"
-    port {
-      port        = 9200
-      target_port = 80
-    }
-    selector = {
-      app = "elasticsearch-endpoints-loadbalancer"
-    }
-  }
-  depends_on = [kubernetes_endpoints.endpoint]
-}
-
 resource "kubernetes_stateful_set" "elasticsearch" {
   metadata {
 
@@ -71,13 +30,12 @@ resource "kubernetes_stateful_set" "elasticsearch" {
       spec {
         container {
           name              = "elasticsearch"
-          image             = "k8s.gcr.io/proxy-to-service:v2"
+          image             = "alpine/socat"
           image_pull_policy = "IfNotPresent"
 
           args = [
-            "tcp",
-            "9200",
-            "elasticsearch-loadbalancer",
+            "tcp-listen:9200,fork,reuseaddr",
+            "tcp-connect:es-ilb.${google_compute_forwarding_rule.elasticsearch.name}.il7.${var.region}.lb.${var.project}.internal:80",
           ]
           port {
             protocol       = "TCP"
