@@ -22,7 +22,7 @@ resource "google_compute_firewall" "elasticsearch_allow_ilb_traffic" {
   priority = 1000
 
   source_ranges = [
-    "192.168.0.0/16",  # internal load balancer subnet used for traffic towards GCE instances
+    "192.168.0.0/16", # internal load balancer subnet used for traffic towards GCE instances
   ]
 
   allow {
@@ -34,12 +34,12 @@ resource "google_compute_firewall" "elasticsearch_allow_ilb_traffic" {
 }
 
 resource "google_compute_firewall" "elasticsearch_allow_external_subnets" {
-  for_each = length(var.allowed_ipv4_subnets) > 0 ? {allowed_ipv4_subnets: var.allowed_ipv4_subnets} : {}
-  name     = "elasticsearch-gcp-gke-communication"
+  count    = length(var.allowed_ipv4_subnets) > 0 ? 1 : 0
+  name     = "elasticsearch-allowed-subnets"
   network  = var.network
   priority = 1000
 
-  source_ranges = each.value
+  source_ranges = var.allowed_ipv4_subnets
 
   allow {
     protocol = "tcp"
@@ -50,12 +50,12 @@ resource "google_compute_firewall" "elasticsearch_allow_external_subnets" {
 }
 
 resource "google_compute_firewall" "elasticsearch_allow_external_tags" {
-  for_each = length(var.allowed_tags) > 0 ? {allowed_tags: var.allowed_tags} : {}
-  name     = "elasticsearch-gcp-gke-communication"
+  count    = length(var.allowed_tags) > 0 ? 1 : 0
+  name     = "elasticsearch-allowed-tags"
   network  = var.network
   priority = 1000
 
-  source_tags = each.value
+  source_tags = var.allowed_tags
 
   allow {
     protocol = "tcp"

@@ -87,7 +87,7 @@ variable "cluster_user" {
   type        = string
 }
 
-variable "cluster_pass" {
+variable "cluster_password" {
   description = "Cluster master password, keep always secret!"
   type        = string
 }

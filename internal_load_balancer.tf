@@ -2,13 +2,6 @@ data "google_compute_network" "default" {
   name = var.network
 }
 
-resource "google_compute_subnetwork" "elastic_lb_subnet" {
-  name          = "es-load-balancer-subnetwork"
-  ip_cidr_range = "192.168.254.0/24"
-  region        = var.region
-  network       = data.google_compute_network.default.self_link
-}
-
 resource "google_compute_region_target_http_proxy" "elasticsearch" {
   provider = google-beta
 
@@ -20,7 +13,7 @@ resource "google_compute_region_target_http_proxy" "elasticsearch" {
 resource "google_compute_region_url_map" "default" {
   provider = google-beta
 
-  region   = var.region
+  region = var.region
   # url map name is displayed as load balancer name, this name maybe misleading
   name            = "es-ilb"
   default_service = google_compute_region_backend_service.elasticsearch.id
@@ -51,16 +44,22 @@ resource "google_compute_forwarding_rule" "elasticsearch" {
 
 resource "google_compute_instance_group" "elasticsearch" {
   provider    = google-beta
-  name        = "elasticsearch-instance-pool-${data.google_compute_zones.available.names[count.index]}"
-  description = "Elasticsearch instance pool ${data.google_compute_zones.available.names[count.index]}"
+  name        = var.zone != null ? "elasticsearch-instance-pool-${var.zone}" : "elasticsearch-instance-pool-${data.google_compute_zones.available.names[count.index]}"
+  description = var.zone != null ? "Elasticsearch instance pool ${var.zone}" : "Elasticsearch instance pool ${data.google_compute_zones.available.names[count.index]}"
   zone        = var.zone != null ? var.zone : data.google_compute_zones.available.names[count.index]
   count       = var.zone != null ? 1 : var.node_count < local.zone_count ? var.node_count : local.zone_count
 
-  instances = [
+  instances = var.zone == null ? [
+    # filter out the instances based on their location in the zones
     for i in google_compute_instance.elasticsearch : i.self_link if
-      data.google_compute_zones.available.names[
-        index(google_compute_instance.elasticsearch, i) % local.zone_count
-      ] == data.google_compute_zones.available.names[count.index]
+    # google_compute_instance.elasticsearch does not reference the zone of instance, instead the zone is known
+    # by the order of the instances created by count attribute
+    data.google_compute_zones.available.names[
+      index(google_compute_instance.elasticsearch, i) % local.zone_count
+    ] == data.google_compute_zones.available.names[count.index]
+    ] : [
+    # all instances belong to one instance group in one zone
+    for i in google_compute_instance.elasticsearch : i.self_link
   ]
 
   named_port {

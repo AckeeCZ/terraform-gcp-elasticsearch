@@ -17,9 +17,10 @@ provider "google-beta" {
 }
 
 module "elasticsearch_prod" {
-  source           = "./.."
-  project          = var.project
-  region           = var.region
+  source  = "./.."
+  project = var.project
+  region  = var.region
+  zone    = var.zone
 
   instance_name    = "elasticsearch-prod"
   cluster_name     = "elasticsearch"
@@ -28,11 +29,11 @@ module "elasticsearch_prod" {
   raw_image_source = "https://storage.googleapis.com/ackee-images/ackee-elasticsearch-7-disk-79.tar.gz"
   data_disk_size   = "10"
 
-  namespace         = var.namespace
+  namespace = var.namespace
 
   cluster_ca_certificate = module.gke.cluster_ca_certificate
   cluster_user           = module.gke.cluster_username
-  cluster_pass           = module.gke.cluster_password
+  cluster_password       = module.gke.cluster_password
   cluster_endpoint       = module.gke.endpoint
 }
 
