@@ -1,41 +1,66 @@
-resource "kubernetes_endpoints" "node" {
-  count = var.k8s_enable ? 1 : 0
+# k8s code resources created mainly for git@github.com:AckeeCZ/goproxie.git compatibility
 
+resource "kubernetes_stateful_set" "elasticsearch" {
   metadata {
-    name      = "elasticsearch"
+
+    labels = {
+      app = "elasticsearch"
+    }
+
     namespace = var.namespace
-  }
-
-  subset {
-    dynamic "address" {
-      for_each = google_compute_instance.elasticsearch
-      content {
-        ip = address.value.network_interface.0.network_ip
-      }
-    }
-
-    port {
-      port = 9200
-    }
-  }
-}
-
-resource "kubernetes_service" "elasticsearch" {
-  count = var.k8s_enable ? 1 : 0
-
-  metadata {
     name      = "elasticsearch"
-    namespace = var.namespace
-    annotations = {
-      "cloud.google.com/load-balancer-type" = "Internal"
-    }
   }
 
   spec {
-    port {
-      port        = 9200
-      target_port = 9200
+    selector {
+      match_labels = {
+        external-app = "elasticsearch"
+      }
+    }
+
+    service_name = "elasticsearch"
+
+    template {
+      metadata {
+        labels = {
+          external-app = "elasticsearch"
+        }
+      }
+
+      spec {
+        container {
+          name              = "elasticsearch"
+          image             = "alpine/socat"
+          image_pull_policy = "IfNotPresent"
+
+          args = [
+            "tcp-listen:9200,fork,reuseaddr",
+            "tcp-connect:es-ilb.${google_compute_forwarding_rule.elasticsearch.name}.il7.${var.region}.lb.${var.project}.internal:80",
+          ]
+          port {
+            protocol       = "TCP"
+            container_port = 9200
+            host_port      = 9200
+          }
+          resources {
+            limits {
+              cpu    = "100m"
+              memory = "100Mi"
+            }
+            requests {
+              cpu    = "10m"
+              memory = "10Mi"
+            }
+          }
+        }
+        termination_grace_period_seconds = 1
+      }
+    }
+    update_strategy {
+      type = "RollingUpdate"
+      rolling_update {
+        partition = 0
+      }
     }
   }
 }
-

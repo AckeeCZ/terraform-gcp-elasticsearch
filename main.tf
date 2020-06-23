@@ -64,7 +64,7 @@ resource "google_compute_instance" "elasticsearch" {
   }
 
   network_interface {
-    network = "default"
+    network = var.network
 
     access_config {
       // Ephemeral IP
@@ -171,18 +171,3 @@ resource "tls_private_key" "provision" {
   algorithm = "RSA"
   rsa_bits  = 4096
 }
-
-resource "google_compute_firewall" "elasticsearch_allow_cluster" {
-  name     = "elasticsearch-allow-cluster-${var.instance_name}"
-  network  = "default"
-  priority = "1000"
-
-  allow {
-    protocol = "tcp"
-    ports    = ["9200", "9300"]
-  }
-
-  source_ranges = [var.cluster_ipv4_cidr]
-  source_tags   = ["elasticsearch"]
-}
-

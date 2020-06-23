@@ -11,19 +11,30 @@ variable "region" {
 variable "zone" {
   description = "Zone of GCP project - optional parameter, if not set, the instances will be spread across the available zones."
   default     = null
+  type        = string
 }
 
 variable "instance_name" {
   description = "Base for GCE instances name."
+  type        = string
 }
 
-variable "cluster_ipv4_cidr" {
-  description = "IPv4 CIDR of k8s cluster used for ES communication."
+variable "allowed_ipv4_subnets" {
+  description = "IPv4 subnets allowed to communicate with ES instances."
+  type        = list(string)
+  default     = []
+}
+
+variable "allowed_tags" {
+  description = "Network tags allowed to communicate with ES instances."
+  type        = list(string)
+  default     = ["k8s"]
 }
 
 variable "node_count" {
   description = "Number of ES nodes to deploy."
-  default     = "1"
+  default     = 1
+  type        = number
 }
 
 variable "heap_size" {
@@ -51,16 +62,37 @@ variable "data_disk_type" {
 
 variable "data_disk_size" {
   description = "Persistent disk size specified in GB."
-}
-
-variable "k8s_enable" {
-  description = "Enable k8s extension to deploy endpoints to cluster members and internal load balancer as a k8s service, use only with k8s provider setup previously"
-  type        = bool
-  default     = false
+  type        = string
 }
 
 variable "namespace" {
   default     = "production"
   description = "K8s namespace used to deploy endpoints and services."
+  type        = string
+}
+
+variable "network" {
+  description = "GCE VPC used for compute instances"
+  default     = "default"
+  type        = string
+}
+
+variable "cluster_ca_certificate" {
+  description = "Public CA certificate that is the root of trust for the GKE K8s cluster"
+  type        = string
+}
+
+variable "cluster_user" {
+  description = "Cluster master username, keep always secret!"
+  type        = string
+}
+
+variable "cluster_password" {
+  description = "Cluster master password, keep always secret!"
+  type        = string
+}
+
+variable "cluster_endpoint" {
+  description = "Cluster control plane endpoint"
   type        = string
 }
