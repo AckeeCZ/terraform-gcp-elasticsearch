@@ -41,36 +41,45 @@ pre-commit install
 | Name | Version |
 |------|---------|
 | terraform | >= 0.12 |
-| google | ~> 3.19.0 |
+| kubernetes | ~> 1.11.0 |
 
 ## Providers
 
 | Name | Version |
 |------|---------|
-| google | ~> 3.19.0 |
-| kubernetes | n/a |
+| google | n/a |
+| google-beta | n/a |
+| kubernetes | ~> 1.11.0 |
 | tls | n/a |
 
 ## Inputs
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
-| cluster\_ipv4\_cidr | IPv4 CIDR of k8s cluster used for ES communication. | `any` | n/a | yes |
+| allowed\_ipv4\_subnets | IPv4 subnets allowed to communicate with ES instances. | `list(string)` | `[]` | no |
+| allowed\_tags | Network tags allowed to communicate with ES instances. | `list(string)` | <pre>[<br>  "k8s"<br>]</pre> | no |
+| cluster\_ca\_certificate | Public CA certificate that is the root of trust for the GKE K8s cluster | `string` | n/a | yes |
+| cluster\_endpoint | Cluster control plane endpoint | `string` | n/a | yes |
 | cluster\_name | ES cluster name. | `string` | n/a | yes |
-| data\_disk\_size | Persistent disk size specified in GB. | `any` | n/a | yes |
+| cluster\_password | Cluster master password, keep always secret! | `string` | n/a | yes |
+| cluster\_user | Cluster master username, keep always secret! | `string` | n/a | yes |
+| data\_disk\_size | Persistent disk size specified in GB. | `string` | n/a | yes |
 | data\_disk\_type | Type of disk used as a persistent storage. | `string` | `"pd-ssd"` | no |
 | heap\_size | Heap size setting for ES. | `string` | `"1800m"` | no |
-| instance\_name | Base for GCE instances name. | `any` | n/a | yes |
-| k8s\_enable | Enable k8s extension to deploy endpoints to cluster members and internal load balancer as a k8s service, use only with k8s provider setup previously | `bool` | `false` | no |
+| instance\_name | Base for GCE instances name. | `string` | n/a | yes |
 | namespace | K8s namespace used to deploy endpoints and services. | `string` | `"production"` | no |
-| node\_count | Number of ES nodes to deploy. | `string` | `"1"` | no |
+| network | GCE VPC used for compute instances | `string` | `"default"` | no |
+| node\_count | Number of ES nodes to deploy. | `number` | `1` | no |
 | project | Name of GCP project. | `string` | n/a | yes |
 | raw\_image\_source | URL of tar archive containing RAW source for ES image (you can use Packer image template to generate image, as mentioned above). | `string` | `"https://storage.googleapis.com/ackee-images/ackee-elasticsearch-7-disk-79.tar.gz"` | no |
 | region | Region of GCP project. | `string` | n/a | yes |
-| zone | Zone of GCP project - optional parameter, if not set, the instances will be spread across the available zones. | `any` | `null` | no |
+| zone | Zone of GCP project - optional parameter, if not set, the instances will be spread across the available zones. | `string` | `null` | no |
 
 ## Outputs
 
-No output.
+| Name | Description |
+|------|-------------|
+| ilb\_dns | DNS name follows GCP internal rule SERVICE\_LABEL.FORWARDING\_RULE\_NAME.il4.REGION.lb.PROJECT\_ID.internal |
+| ip\_address | The internal IP assigned to the regional forwarding rule. |
 
 <!-- END OF PRE-COMMIT-TERRAFORM DOCS HOOK -->

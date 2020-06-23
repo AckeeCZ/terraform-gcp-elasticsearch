@@ -1,7 +1,7 @@
 resource "google_compute_firewall" "elasticsearch_allow_healthchecks" {
   name     = "elasticsearch-gcp-health-check"
-  network  = var.network
   priority = 1000
+  network  = var.network
 
   source_ranges = [
     # all the subnets for GCP health checks
