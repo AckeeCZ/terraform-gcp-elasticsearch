@@ -5,6 +5,25 @@ data "google_compute_zones" "available" {
 
 locals {
   zone_count = length(data.google_compute_zones.available.names)
+  elasticsearch_configuration = templatefile(
+    "${path.module}/elasticsearch.yml.tpl",
+    {
+      project      = var.project,
+      zones        = join(", ", data.google_compute_zones.available.names),
+      cluster_name = var.cluster_name
+    }
+  )
+  master_list = templatefile(
+    "${path.module}/master_list.sh.tpl",
+    {
+      master_list = join(",",
+        [
+          for i in range(var.node_count) :
+          "${var.instance_name}-${i}"
+        ]
+      )
+    }
+  )
 }
 
 resource "google_service_account" "elasticsearch_backup" {
@@ -65,102 +84,29 @@ resource "google_compute_instance" "elasticsearch" {
 
   network_interface {
     network = var.network
-
-    access_config {
-      // Ephemeral IP
-    }
   }
 
   metadata = {
-    ssh-keys = "devops:${tls_private_key.provision.public_key_openssh}"
+    ssh-keys  = "devops:${tls_private_key.provision.public_key_openssh}"
+    user-data = <<-EOT
+#!/bin/bash
+
+echo "${base64encode(local.elasticsearch_configuration)}" | base64 -d > /tmp/elasticsearch.yml;
+echo "${google_service_account_key.elasticsearch_backup.private_key}" | base64 -d > /tmp/backup-sa.key;
+echo "${base64encode(local.master_list)}" | base64 -d > /home/devops/master_list.sh;
+echo "${filebase64("${path.module}/bootstrap.sh")}" | base64 -d > /tmp/bootstrap.sh;
+
+mv /tmp/elasticsearch.yml /etc/elasticsearch
+sed -i 's/^\\(-Xm[xs]\\).*/\\1${var.heap_size}/' /etc/elasticsearch/jvm.options
+/usr/share/elasticsearch/bin/elasticsearch-keystore add-file gcs.client.default.credentials_file /tmp/backup-sa.key
+rm /tmp/backup-sa.key
+bash /tmp/bootstrap.sh
+systemctl start elasticsearch.service
+  EOT
   }
 
   service_account {
     scopes = ["userinfo-email", "compute-ro", "storage-rw", "monitoring-write", "logging-write", "https://www.googleapis.com/auth/trace.append"]
-  }
-
-  provisioner "file" {
-    content = templatefile(
-      "${path.module}/elasticsearch.yml.tpl", {
-        project      = var.project,
-        zones        = join(", ", data.google_compute_zones.available.names),
-        cluster_name = var.cluster_name
-      }
-    )
-    destination = "/tmp/elasticsearch.yml"
-
-    connection {
-      host        = self.network_interface.0.access_config.0.nat_ip
-      type        = "ssh"
-      user        = "devops"
-      private_key = tls_private_key.provision.private_key_pem
-      agent       = false
-    }
-  }
-
-  provisioner "file" {
-    content     = base64decode(google_service_account_key.elasticsearch_backup.private_key)
-    destination = "/tmp/backup-sa.key"
-
-    connection {
-      host        = self.network_interface.0.access_config.0.nat_ip
-      type        = "ssh"
-      user        = "devops"
-      private_key = tls_private_key.provision.private_key_pem
-      agent       = false
-    }
-  }
-
-  provisioner "file" {
-    content = templatefile(
-      "${path.module}/master_list.sh.tpl", {
-        master_list = join(",", [
-          for i in range(var.node_count) :
-          "${var.instance_name}-${i}"
-        ])
-      }
-    )
-    destination = "/home/devops/master_list.sh"
-
-    connection {
-      host        = self.network_interface.0.access_config.0.nat_ip
-      type        = "ssh"
-      user        = "devops"
-      private_key = tls_private_key.provision.private_key_pem
-      agent       = false
-    }
-  }
-
-  provisioner "file" {
-    source      = "${path.module}/bootstrap.sh"
-    destination = "/tmp/bootstrap.sh"
-
-    connection {
-      host        = self.network_interface.0.access_config.0.nat_ip
-      type        = "ssh"
-      user        = "devops"
-      private_key = tls_private_key.provision.private_key_pem
-      agent       = false
-    }
-  }
-
-  provisioner "remote-exec" {
-    connection {
-      host        = self.network_interface.0.access_config.0.nat_ip
-      type        = "ssh"
-      user        = "devops"
-      private_key = tls_private_key.provision.private_key_pem
-      agent       = false
-    }
-
-    inline = [
-      "sudo mv /tmp/elasticsearch.yml /etc/elasticsearch",
-      "sudo sed -i 's/^\\(-Xm[xs]\\).*/\\1${var.heap_size}/' /etc/elasticsearch/jvm.options",
-      "sudo /usr/share/elasticsearch/bin/elasticsearch-keystore add-file gcs.client.default.credentials_file /tmp/backup-sa.key",
-      "sudo rm /tmp/backup-sa.key",
-      "sudo bash /tmp/bootstrap.sh",
-      "sudo systemctl start elasticsearch.service"
-    ]
   }
 
   # not sure if ok for production
