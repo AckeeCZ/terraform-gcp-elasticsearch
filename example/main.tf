@@ -7,7 +7,7 @@ provider "tls" {
 }
 
 provider "google" {
-  version = "~> 2.20.0"
+  version = "~> 3.19.0"
   project = var.project
   region  = var.zone
 }
@@ -31,10 +31,15 @@ module "elasticsearch_prod" {
   data_disk_size    = "10"
   k8s_enable        = true
   namespace         = var.namespace
+
+  cluster_ca_certificate = module.gke.cluster_ca_certificate
+  cluster_user           = module.gke.cluster_username
+  cluster_password       = module.gke.cluster_password
+  cluster_endpoint       = module.gke.endpoint
 }
 
 module "gke" {
-  source            = "git::ssh://git@gitlab.ack.ee/Infra/terraform-gke-vpc.git?ref=v6.2.0"
+  source            = "git::ssh://git@gitlab.ack.ee/Infra/terraform-gke-vpc.git?ref=v6.4.0"
   namespace         = var.namespace
   project           = var.project
   location          = var.zone

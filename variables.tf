@@ -59,6 +59,26 @@ variable "k8s_enable" {
   default     = false
 }
 
+variable "cluster_ca_certificate" {
+  description = "Public CA certificate that is the root of trust for the GKE K8s cluster"
+  type        = string
+}
+
+variable "cluster_user" {
+  description = "Cluster master username, keep always secret!"
+  type        = string
+}
+
+variable "cluster_password" {
+  description = "Cluster master password, keep always secret!"
+  type        = string
+}
+
+variable "cluster_endpoint" {
+  description = "Cluster control plane endpoint"
+  type        = string
+}
+
 variable "namespace" {
   default     = "production"
   description = "K8s namespace used to deploy endpoints and services."
