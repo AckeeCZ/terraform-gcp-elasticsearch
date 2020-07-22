@@ -77,6 +77,12 @@ variable "network" {
   type        = string
 }
 
+variable "load_balancer_subnetwork" {
+  description = "The subnetwork that the load balanced IP should belong to for this Forwarding Rule. If the network specified is in auto subnet mode, this field is optional. However, if the network is in custom subnet mode, a subnetwork must be specified."
+  default     = "10.64.0.0/26"
+  type        = string
+}
+
 variable "cluster_ca_certificate" {
   description = "Public CA certificate that is the root of trust for the GKE K8s cluster"
   type        = string

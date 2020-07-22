@@ -1,7 +1,7 @@
 cluster:
   name: ${cluster_name}
 
-network.host: _site_,_lo_
+network.host: "0.0.0.0"
 
 path:
   data: /var/lib/elasticsearch

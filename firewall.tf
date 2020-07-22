@@ -22,7 +22,7 @@ resource "google_compute_firewall" "elasticsearch_allow_ilb_traffic" {
   priority = 1000
 
   source_ranges = [
-    "192.168.0.0/16", # internal load balancer subnet used for traffic towards GCE instances
+    var.load_balancer_subnetwork
   ]
 
   allow {

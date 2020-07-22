@@ -1,49 +1,42 @@
 data "google_compute_network" "default" {
-  name = var.network
+  name    = var.network
+  project = var.project
 }
 
-resource "google_compute_region_target_http_proxy" "elasticsearch" {
+resource "google_compute_subnetwork" "proxy" {
   provider = google-beta
 
-  region  = var.region
-  name    = "es-backend-proxy"
-  url_map = google_compute_region_url_map.default.id
+  name          = "elasticsearch-net-proxy"
+  ip_cidr_range = var.load_balancer_subnetwork
+  region        = var.region
+  network       = data.google_compute_network.default.id
+  purpose       = "PRIVATE"
+  role          = "ACTIVE"
 }
-
-resource "google_compute_region_url_map" "default" {
-  provider = google-beta
-
-  region = var.region
-  # url map name is displayed as load balancer name, this name maybe misleading
-  name            = "es-ilb"
-  default_service = google_compute_region_backend_service.elasticsearch.id
-}
-
 
 resource "google_compute_forwarding_rule" "elasticsearch" {
   provider = google-beta
 
-  all_ports              = false
-  allow_global_access    = false
-  is_mirroring_collector = false
+  all_ports = true
 
   name = "elasticsearch-forwarding-rule"
 
   network    = data.google_compute_network.default.self_link
-  port_range = "80-80"
+  subnetwork = google_compute_subnetwork.proxy.id
 
-  load_balancing_scheme = "INTERNAL_MANAGED"
+  load_balancing_scheme = "INTERNAL"
   ip_protocol           = "TCP"
 
-  region = var.region
-  target = google_compute_region_target_http_proxy.elasticsearch.self_link
+  region          = var.region
+  backend_service = google_compute_region_backend_service.elasticsearch.id
 
   # used as DNS reference in internal GCE DNS system, service without label do not get DNS name
   service_label = "es-ilb"
 }
 
 resource "google_compute_instance_group" "elasticsearch" {
-  provider    = google-beta
+  provider = google-beta
+
   name        = var.zone != null ? "elasticsearch-instance-pool-${var.zone}" : "elasticsearch-instance-pool-${data.google_compute_zones.available.names[count.index]}"
   description = var.zone != null ? "Elasticsearch instance pool ${var.zone}" : "Elasticsearch instance pool ${data.google_compute_zones.available.names[count.index]}"
   zone        = var.zone != null ? var.zone : data.google_compute_zones.available.names[count.index]
@@ -74,46 +67,35 @@ resource "google_compute_instance_group" "elasticsearch" {
   }
 }
 
-resource "google_compute_region_health_check" "elasticsearch" {
-  provider           = google-beta
-  name               = "elasticsearch-healthcheck"
-  check_interval_sec = 5
-  timeout_sec        = 5
-  region             = var.region
+resource "google_compute_health_check" "elasticsearch" {
+  provider = google-beta
 
-  http_health_check {
+  name               = "elasticsearch-healthcheck"
+  check_interval_sec = 1
+  timeout_sec        = 1
+  tcp_health_check {
     port = "9200"
-  }
-  log_config {
-    enable = true
   }
 }
 
-
 resource "google_compute_region_backend_service" "elasticsearch" {
-  provider              = google-beta
+  provider = google-beta
+
   name                  = "elasticsearch-lb"
-  protocol              = "HTTP"
+  protocol              = "TCP"
   timeout_sec           = 30
-  load_balancing_scheme = "INTERNAL_MANAGED"
+  load_balancing_scheme = "INTERNAL"
 
   region = var.region
-
-  connection_draining_timeout_sec = 300
-  locality_lb_policy              = "ROUND_ROBIN"
 
   dynamic "backend" {
     for_each = google_compute_instance_group.elasticsearch
     content {
-      balancing_mode        = "RATE"
-      capacity_scaler       = 1
-      failover              = false
-      group                 = backend.value.self_link
-      max_rate_per_instance = 100
+      group = backend.value.self_link
     }
   }
 
-  health_checks = [google_compute_region_health_check.elasticsearch.self_link]
+  health_checks = [google_compute_health_check.elasticsearch.self_link]
 }
 
 
