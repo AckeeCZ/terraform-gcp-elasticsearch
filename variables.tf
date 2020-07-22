@@ -28,7 +28,7 @@ variable "allowed_ipv4_subnets" {
 variable "allowed_tags" {
   description = "Network tags allowed to communicate with ES instances."
   type        = list(string)
-  default     = ["k8s"]
+  default     = []
 }
 
 variable "node_count" {

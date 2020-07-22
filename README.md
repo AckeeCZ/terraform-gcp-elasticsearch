@@ -57,7 +57,7 @@ pre-commit install
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
 | allowed\_ipv4\_subnets | IPv4 subnets allowed to communicate with ES instances. | `list(string)` | `[]` | no |
-| allowed\_tags | Network tags allowed to communicate with ES instances. | `list(string)` | <pre>[<br>  "k8s"<br>]</pre> | no |
+| allowed\_tags | Network tags allowed to communicate with ES instances. | `list(string)` | `[]` | no |
 | cluster\_ca\_certificate | Public CA certificate that is the root of trust for the GKE K8s cluster | `string` | n/a | yes |
 | cluster\_endpoint | Cluster control plane endpoint | `string` | n/a | yes |
 | cluster\_name | ES cluster name. | `string` | n/a | yes |
