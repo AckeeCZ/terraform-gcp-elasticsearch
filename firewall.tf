@@ -1,5 +1,5 @@
 resource "google_compute_firewall" "elasticsearch_allow_healthchecks" {
-  name     = "elasticsearch-gcp-health-check"
+  name     = "elasticsearch-gcp-health-check${local.suffix}"
   priority = 1000
   network  = var.network
 
@@ -17,7 +17,7 @@ resource "google_compute_firewall" "elasticsearch_allow_healthchecks" {
 }
 
 resource "google_compute_firewall" "elasticsearch_allow_ilb_traffic" {
-  name     = "elasticsearch-gce-traffic"
+  name     = "elasticsearch-gce-traffic${local.suffix}"
   network  = var.network
   priority = 1000
 
@@ -35,7 +35,7 @@ resource "google_compute_firewall" "elasticsearch_allow_ilb_traffic" {
 
 resource "google_compute_firewall" "elasticsearch_allow_external_subnets" {
   count    = length(var.allowed_ipv4_subnets) > 0 ? 1 : 0
-  name     = "elasticsearch-allowed-subnets"
+  name     = "elasticsearch-allowed-subnets${local.suffix}"
   network  = var.network
   priority = 1000
 
@@ -51,7 +51,7 @@ resource "google_compute_firewall" "elasticsearch_allow_external_subnets" {
 
 resource "google_compute_firewall" "elasticsearch_allow_external_tags" {
   count    = length(var.allowed_tags) > 0 ? 1 : 0
-  name     = "elasticsearch-allowed-tags"
+  name     = "elasticsearch-allowed-tags${local.suffix}"
   network  = var.network
   priority = 1000
 

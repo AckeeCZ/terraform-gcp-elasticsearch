@@ -3,6 +3,11 @@ data "google_compute_zones" "available" {
   region  = var.region
 }
 
+resource "random_id" "es_name_suffix" {
+  byte_length = 4
+  count       = var.add_suffix ? 1 : 0
+}
+
 locals {
   zone_count = length(data.google_compute_zones.available.names)
   elasticsearch_configuration = templatefile(
@@ -19,10 +24,11 @@ locals {
       "${var.instance_name}-${i}"
     ]
   )
+  suffix = var.add_suffix ? "-${random_id.es_name_suffix[0].hex}" : ""
 }
 
 resource "google_service_account" "elasticsearch_backup" {
-  account_id   = "elasticsearch-backup"
+  account_id   = "elasticsearch-backup${local.suffix}"
   display_name = "elasticsearch-backup"
   project      = var.project
 }
@@ -39,7 +45,7 @@ resource "google_service_account_key" "elasticsearch_backup" {
 }
 
 resource "google_compute_image" "elasticsearch" {
-  name = "elasticsearch-image"
+  name = "elasticsearch-image${local.suffix}"
 
   raw_disk {
     source = var.raw_image_source
@@ -50,7 +56,7 @@ resource "google_compute_image" "elasticsearch" {
 }
 
 resource "google_compute_disk" "data" {
-  name  = "${var.instance_name}-${count.index}-persistent-data"
+  name  = "${var.instance_name}-${count.index}-persistent-data${local.suffix}"
   type  = var.data_disk_type
   size  = var.data_disk_size
   zone  = var.zone != null ? var.zone : data.google_compute_zones.available.names[count.index % local.zone_count]
@@ -58,7 +64,7 @@ resource "google_compute_disk" "data" {
 }
 
 resource "google_compute_instance" "elasticsearch" {
-  name         = "${var.instance_name}-${count.index}"
+  name         = "${var.instance_name}-${count.index}${local.suffix}"
   machine_type = "n1-standard-1"
   zone         = var.zone != null ? var.zone : data.google_compute_zones.available.names[count.index % local.zone_count]
   count        = var.node_count
@@ -73,7 +79,7 @@ resource "google_compute_instance" "elasticsearch" {
     }
   }
   attached_disk {
-    source      = "${var.instance_name}-${count.index}-persistent-data"
+    source      = google_compute_disk.data[count.index].name
     device_name = "elasticpd"
   }
 

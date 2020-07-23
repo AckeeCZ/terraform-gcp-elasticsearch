@@ -8,28 +8,28 @@ resource "kubernetes_stateful_set" "elasticsearch" {
     }
 
     namespace = var.namespace
-    name      = "elasticsearch"
+    name      = "elasticsearch${local.suffix}"
   }
 
   spec {
     selector {
       match_labels = {
-        external-app = "elasticsearch"
+        external-app = "elasticsearch${local.suffix}"
       }
     }
 
-    service_name = "elasticsearch"
+    service_name = "elasticsearch${local.suffix}"
 
     template {
       metadata {
         labels = {
-          external-app = "elasticsearch"
+          external-app = "elasticsearch${local.suffix}"
         }
       }
 
       spec {
         container {
-          name              = "elasticsearch"
+          name              = "elasticsearch${local.suffix}"
           image             = "alpine/socat"
           image_pull_policy = "IfNotPresent"
 
