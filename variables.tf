@@ -28,7 +28,7 @@ variable "allowed_ipv4_subnets" {
 variable "allowed_tags" {
   description = "Network tags allowed to communicate with ES instances."
   type        = list(string)
-  default     = ["k8s"]
+  default     = []
 }
 
 variable "node_count" {
@@ -74,6 +74,12 @@ variable "namespace" {
 variable "network" {
   description = "GCE VPC used for compute instances"
   default     = "default"
+  type        = string
+}
+
+variable "load_balancer_subnetwork" {
+  description = "The subnetwork that the load balanced IP should belong to for this Forwarding Rule. If the network specified is in auto subnet mode, this field is optional. However, if the network is in custom subnet mode, a subnetwork must be specified."
+  default     = "10.64.0.0/26"
   type        = string
 }
 

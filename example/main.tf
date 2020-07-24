@@ -35,6 +35,8 @@ module "elasticsearch_prod" {
   cluster_user           = module.gke.cluster_username
   cluster_password       = module.gke.cluster_password
   cluster_endpoint       = module.gke.endpoint
+
+  allowed_ipv4_subnets = [module.gke.cluster_ipv4_cidr]
 }
 
 module "gke" {
