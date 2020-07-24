@@ -3,9 +3,11 @@ data "google_compute_zones" "available" {
   region  = var.region
 }
 
-resource "random_id" "es_name_suffix" {
-  byte_length = 4
-  count       = var.add_suffix ? 1 : 0
+resource "random_string" "es_name_suffix" {
+  length  = 8
+  special = false
+  upper   = false
+  count   = var.add_random_suffix ? 1 : 0
 }
 
 locals {
@@ -24,7 +26,7 @@ locals {
       "${var.instance_name}-${i}"
     ]
   )
-  suffix = var.add_suffix ? "-${random_id.es_name_suffix[0].hex}" : ""
+  suffix = var.add_random_suffix ? "-${random_string.es_name_suffix[0].result}" : ""
 }
 
 resource "google_service_account" "elasticsearch_backup" {

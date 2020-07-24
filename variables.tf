@@ -103,8 +103,8 @@ variable "cluster_endpoint" {
   type        = string
 }
 
-variable "add_suffix" {
-  description = "Add random suffix to all resources that will prevent more instances of this module to be provisioned"
+variable "add_random_suffix" {
+  description = "Add random suffix to all resources with possible duplicates if the same modul is deployed multiple times"
   default     = false
   type        = bool
 }

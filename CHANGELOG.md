@@ -6,7 +6,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [v8.1.0] - 2020-07-23
 ### Added
-- Add optional (turned on by `add_suffix` parameter) random suffix to all resources that will prevent more instances of this module to be provisioned
+- Add optional (turned on by `add_random_suffix` parameter) random suffix to all resources that will prevent more instances of this module to be provisioned
 
 ## [v8.0.0] - 2020-07-22
 ### Changed
