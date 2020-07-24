@@ -63,13 +63,11 @@ done
 
 if [[ ${master_settings_missing} == "true" ]]; then
 
-  # contains the list of master nodes in $master_list, otherwise, there is nothing else in that file
-  source /home/devops/master_list.sh
-
+  # contains the list of master nodes in $MASTER_LIST, otherwise, there is nothing else in that file
   # this will start elasticsearch only once with setting cluster.initial_master_nodes, this is encouraged in
   #  documentation https://www.elastic.co/guide/en/elasticsearch/reference/master/discovery-settings.html#initial_master_nodes
   #  stating you can use this option once during cluster init and do not use it after restart
-  su elasticsearch -s /bin/bash -c "/usr/share/elasticsearch/bin/elasticsearch -Ecluster.initial_master_nodes=${master_list} | tee /tmp/elasticsearch_bootstrap_master_list_start.log >/dev/full" &
+  su elasticsearch -s /bin/bash -c "/usr/share/elasticsearch/bin/elasticsearch -Ecluster.initial_master_nodes=${MASTER_LIST} | tee /tmp/elasticsearch_bootstrap_master_list_start.log >/dev/full" &
 
   # once the discovery starts, give it a few seconds to finnish
   while ! grep "starting GCE discovery service" /tmp/elasticsearch_bootstrap_master_list_start.log; do

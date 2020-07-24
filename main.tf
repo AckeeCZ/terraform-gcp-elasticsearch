@@ -13,16 +13,11 @@ locals {
       cluster_name = var.cluster_name
     }
   )
-  master_list = templatefile(
-    "${path.module}/master_list.sh.tpl",
-    {
-      master_list = join(",",
-        [
-          for i in range(var.node_count) :
-          "${var.instance_name}-${i}"
-        ]
-      )
-    }
+  master_list = join(",",
+    [
+      for i in range(var.node_count) :
+      "${var.instance_name}-${i}"
+    ]
   )
 }
 
@@ -91,10 +86,11 @@ resource "google_compute_instance" "elasticsearch" {
     user-data = <<-EOT
 #!/bin/bash
 
-echo "${base64encode(local.elasticsearch_configuration)}" | base64 -d > /tmp/elasticsearch.yml;
-echo "${google_service_account_key.elasticsearch_backup.private_key}" | base64 -d > /tmp/backup-sa.key;
-echo "${base64encode(local.master_list)}" | base64 -d > /home/devops/master_list.sh;
-echo "${filebase64("${path.module}/bootstrap.sh")}" | base64 -d > /tmp/bootstrap.sh;
+export MASTER_LIST=${local.master_list}
+
+base64 -d <<< "${base64encode(local.elasticsearch_configuration)}" > /tmp/elasticsearch.yml
+base64 -d <<< "${google_service_account_key.elasticsearch_backup.private_key}" > /tmp/backup-sa.key
+base64 -d <<< "${filebase64("${path.module}/bootstrap.sh")}" > /tmp/bootstrap.sh
 
 mv /tmp/elasticsearch.yml /etc/elasticsearch
 sed -i 's/^\\(-Xm[xs]\\).*/\\1${var.heap_size}/' /etc/elasticsearch/jvm.options
