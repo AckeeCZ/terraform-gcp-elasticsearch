@@ -57,7 +57,7 @@ pre-commit install
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
-| add\_random_suffix | Add random suffix to all resources with possible duplicates if the same modul is deployed multiple times | `bool` | `false` | no |
+| add\_random\_suffix | Add random suffix to all resources with possible duplicates if the same modul is deployed multiple times | `bool` | `false` | no |
 | allowed\_ipv4\_subnets | IPv4 subnets allowed to communicate with ES instances. | `list(string)` | `[]` | no |
 | allowed\_tags | Network tags allowed to communicate with ES instances. | `list(string)` | `[]` | no |
 | cluster\_ca\_certificate | Public CA certificate that is the root of trust for the GKE K8s cluster | `string` | n/a | yes |
