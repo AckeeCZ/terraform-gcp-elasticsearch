@@ -15,7 +15,7 @@ variable "zone" {
 }
 
 variable "instance_name" {
-  description = "Base for GCE instances name."
+  description = "Base for GCE instances name. Must be unique within GCP project"
   type        = string
 }
 
@@ -101,4 +101,10 @@ variable "cluster_password" {
 variable "cluster_endpoint" {
   description = "Cluster control plane endpoint"
   type        = string
+}
+
+variable "add_random_suffix" {
+  description = "Add random suffix to all resources with possible duplicates if the same modul is deployed multiple times"
+  default     = false
+  type        = bool
 }

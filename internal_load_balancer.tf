@@ -6,7 +6,7 @@ data "google_compute_network" "default" {
 resource "google_compute_subnetwork" "proxy" {
   provider = google-beta
 
-  name          = "elasticsearch-net-proxy"
+  name          = "elasticsearch-net-proxy${local.suffix}"
   ip_cidr_range = var.load_balancer_subnetwork
   region        = var.region
   network       = data.google_compute_network.default.id
@@ -19,7 +19,7 @@ resource "google_compute_forwarding_rule" "elasticsearch" {
 
   all_ports = true
 
-  name = "elasticsearch-forwarding-rule"
+  name = "elasticsearch-forwarding-rule${local.suffix}"
 
   network    = data.google_compute_network.default.self_link
   subnetwork = google_compute_subnetwork.proxy.id
@@ -37,8 +37,8 @@ resource "google_compute_forwarding_rule" "elasticsearch" {
 resource "google_compute_instance_group" "elasticsearch" {
   provider = google-beta
 
-  name        = var.zone != null ? "elasticsearch-instance-pool-${var.zone}" : "elasticsearch-instance-pool-${data.google_compute_zones.available.names[count.index]}"
-  description = var.zone != null ? "Elasticsearch instance pool ${var.zone}" : "Elasticsearch instance pool ${data.google_compute_zones.available.names[count.index]}"
+  name        = var.zone != null ? "elasticsearch-instance-pool-${var.zone}${local.suffix}" : "elasticsearch-instance-pool-${data.google_compute_zones.available.names[count.index]}${local.suffix}"
+  description = var.zone != null ? "Elasticsearch instance pool ${var.zone}${local.suffix}" : "Elasticsearch instance pool ${data.google_compute_zones.available.names[count.index]}${local.suffix}"
   zone        = var.zone != null ? var.zone : data.google_compute_zones.available.names[count.index]
   count       = var.zone != null ? 1 : var.node_count < local.zone_count ? var.node_count : local.zone_count
 
@@ -70,7 +70,7 @@ resource "google_compute_instance_group" "elasticsearch" {
 resource "google_compute_health_check" "elasticsearch" {
   provider = google-beta
 
-  name               = "elasticsearch-healthcheck"
+  name               = "elasticsearch-healthcheck${local.suffix}"
   check_interval_sec = 1
   timeout_sec        = 1
   tcp_health_check {
@@ -81,7 +81,7 @@ resource "google_compute_health_check" "elasticsearch" {
 resource "google_compute_region_backend_service" "elasticsearch" {
   provider = google-beta
 
-  name                  = "elasticsearch-lb"
+  name                  = "elasticsearch-lb${local.suffix}"
   protocol              = "TCP"
   timeout_sec           = 30
   load_balancing_scheme = "INTERNAL"

@@ -39,6 +39,31 @@ module "elasticsearch_prod" {
   allowed_ipv4_subnets = [module.gke.cluster_ipv4_cidr]
 }
 
+module "elasticsearch_second_prod" {
+  source  = "./.."
+  project = var.project
+  region  = var.region
+
+  instance_name    = "elasticsearch-prod-2"
+  cluster_name     = "elasticsearch"
+  node_count       = 2
+  heap_size        = "1500m"
+  raw_image_source = "https://storage.googleapis.com/ackee-images/ackee-elasticsearch-7-disk-79.tar.gz"
+  data_disk_size   = "10"
+
+  namespace = var.namespace
+
+  cluster_ca_certificate = module.gke.cluster_ca_certificate
+  cluster_user           = module.gke.cluster_username
+  cluster_password       = module.gke.cluster_password
+  cluster_endpoint       = module.gke.endpoint
+
+  allowed_ipv4_subnets = [module.gke.cluster_ipv4_cidr]
+  add_random_suffix    = true
+
+  load_balancer_subnetwork = "192.168.254.0/24"
+}
+
 module "gke" {
   source            = "git::ssh://git@gitlab.ack.ee/Infra/terraform-gke-vpc.git?ref=v6.4.0"
   namespace         = var.namespace
@@ -75,4 +100,13 @@ output "ip_address" {
 
 output "ilb_dns" {
   value = module.elasticsearch_prod.ilb_dns
+}
+
+
+output "ip_address_with_suffix" {
+  value = module.elasticsearch_stage.ip_address
+}
+
+output "ilb_dns_with_suffix" {
+  value = module.elasticsearch_stage.ilb_dns
 }

@@ -50,12 +50,14 @@ pre-commit install
 | google | n/a |
 | google-beta | n/a |
 | kubernetes | ~> 1.11.0 |
+| random | n/a |
 | tls | n/a |
 
 ## Inputs
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
+| add\_random\_suffix | Add random suffix to all resources with possible duplicates if the same modul is deployed multiple times | `bool` | `false` | no |
 | allowed\_ipv4\_subnets | IPv4 subnets allowed to communicate with ES instances. | `list(string)` | `[]` | no |
 | allowed\_tags | Network tags allowed to communicate with ES instances. | `list(string)` | `[]` | no |
 | cluster\_ca\_certificate | Public CA certificate that is the root of trust for the GKE K8s cluster | `string` | n/a | yes |
@@ -66,7 +68,7 @@ pre-commit install
 | data\_disk\_size | Persistent disk size specified in GB. | `string` | n/a | yes |
 | data\_disk\_type | Type of disk used as a persistent storage. | `string` | `"pd-ssd"` | no |
 | heap\_size | Heap size setting for ES. | `string` | `"1800m"` | no |
-| instance\_name | Base for GCE instances name. | `string` | n/a | yes |
+| instance\_name | Base for GCE instances name. Must be unique within GCP project | `string` | n/a | yes |
 | load\_balancer\_subnetwork | The subnetwork that the load balanced IP should belong to for this Forwarding Rule. If the network specified is in auto subnet mode, this field is optional. However, if the network is in custom subnet mode, a subnetwork must be specified. | `string` | `"10.64.0.0/26"` | no |
 | namespace | K8s namespace used to deploy endpoints and services. | `string` | `"production"` | no |
 | network | GCE VPC used for compute instances | `string` | `"default"` | no |
