@@ -56,9 +56,11 @@ pre-commit install
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
-| add\_random\_suffix | Add random suffix to all resources with possible duplicates if the same modul is deployed multiple times | `bool` | `false` | no |
+| add\_random\_suffix | Add random suffix to all resources with possible duplicates if the same module is deployed multiple times | `bool` | `false` | no |
 | allowed\_ipv4\_subnets | IPv4 subnets allowed to communicate with ES instances. | `list(string)` | `[]` | no |
 | allowed\_tags | Network tags allowed to communicate with ES instances. | `list(string)` | `[]` | no |
+| backup\_repository\_create | If GCS bucket should be created. Set to false, if you previously created bucket | `bool` | `true` | no |
+| backup\_repository\_name | Custom name of Elasticsearch backup repository, same name is going to be used for backup bucket | `string` | `""` | no |
 | cluster\_ca\_certificate | Public CA certificate that is the root of trust for the GKE K8s cluster | `string` | n/a | yes |
 | cluster\_endpoint | Cluster control plane endpoint | `string` | n/a | yes |
 | cluster\_name | ES cluster name. | `string` | n/a | yes |

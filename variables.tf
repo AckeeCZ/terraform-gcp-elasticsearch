@@ -110,7 +110,7 @@ variable "cluster_endpoint" {
 }
 
 variable "add_random_suffix" {
-  description = "Add random suffix to all resources with possible duplicates if the same modul is deployed multiple times"
+  description = "Add random suffix to all resources with possible duplicates if the same module is deployed multiple times"
   default     = false
   type        = bool
 }
@@ -119,4 +119,16 @@ variable "machine_type" {
   description = "The machine type to create"
   default     = "n1-standard-1"
   type        = string
+}
+
+variable "backup_repository_name" {
+  description = "Custom name of Elasticsearch backup repository, same name is going to be used for backup bucket"
+  type        = string
+  default     = ""
+}
+
+variable "backup_repository_create" {
+  description = "If GCS bucket should be created. Set to false, if you previously created bucket "
+  default     = true
+  type        = bool
 }

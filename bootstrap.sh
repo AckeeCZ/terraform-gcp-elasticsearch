@@ -86,6 +86,51 @@ if [[ ${master_settings_missing} == "true" ]]; then
 fi
 
 systemctl enable elasticsearch.service
+systemctl start elasticsearch.service
+
+while ! curl localhost:9200/_cluster/health?pretty | grep 'status' | grep 'green'; do
+  sleep 10
+done
+
+# Create Elasticsearch snapshot repository
+if ! curl -f -XGET localhost:9200/_snapshot/${BACKUP_REPOSITORY}?pretty; then
+  printf "%s" "$(cat<<EOF
+    {
+      "type": "gcs",
+      "settings": {
+        "bucket": "${BACKUP_REPOSITORY}",
+        "base_path": "es_backup"
+      }
+    }
+EOF
+)" > /tmp/snapshot-repository.json
+
+  curl -XPUT localhost:9200/_snapshot/${BACKUP_REPOSITORY}?pretty -H 'Content-Type: application/json' -d  @/tmp/snapshot-repository.json
+fi
+
+
+# Create snapshot lifecycle management policy
+if ! curl -f -XGET localhost:9200/_slm/policy/nightly-snapshots?pretty; then
+  printf "%s" "$(cat<<EOF
+    {
+      "schedule": "0 30 1 * * ?",
+      "name": "<nightly-snap-{now/d}>",
+      "repository": "${BACKUP_REPOSITORY}",
+      "config": {
+        "indices": ["*"]
+      },
+      "retention": {
+        "expire_after": "20d",
+        "min_count": 5,
+        "max_count": 50
+      }
+    }
+EOF
+)" > /tmp/nightly-snapshots.json
+
+  curl -XPUT localhost:9200/_slm/policy/nightly-snapshots?pretty -H 'Content-Type: application/json' -d @/tmp/nightly-snapshots.json
+fi
+
 
 if [[ -f /tmp/elasticsearch_bootstrap_start.log ]]; then
   rm /tmp/elasticsearch_bootstrap_start.log
