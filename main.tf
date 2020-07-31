@@ -67,7 +67,7 @@ resource "google_compute_disk" "data" {
 
 resource "google_compute_instance" "elasticsearch" {
   name         = "${var.instance_name}-${count.index}${local.suffix}"
-  machine_type = "n1-standard-1"
+  machine_type = var.machine_type
   zone         = var.zone != null ? var.zone : data.google_compute_zones.available.names[count.index % local.zone_count]
   count        = var.node_count
 

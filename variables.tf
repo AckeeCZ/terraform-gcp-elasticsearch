@@ -108,3 +108,9 @@ variable "add_random_suffix" {
   default     = false
   type        = bool
 }
+
+variable "machine_type" {
+  description = "The machine type to create"
+  default     = "n1-standard-1"
+  type        = string
+}

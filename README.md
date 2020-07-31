@@ -70,6 +70,7 @@ pre-commit install
 | heap\_size | Heap size setting for ES. | `string` | `"1800m"` | no |
 | instance\_name | Base for GCE instances name. Must be unique within GCP project | `string` | n/a | yes |
 | load\_balancer\_subnetwork | The subnetwork that the load balanced IP should belong to for this Forwarding Rule. If the network specified is in auto subnet mode, this field is optional. However, if the network is in custom subnet mode, a subnetwork must be specified. | `string` | `"10.64.0.0/26"` | no |
+| machine\_type | The machine type to create | `string` | `"n1-standard-1"` | no |
 | namespace | K8s namespace used to deploy endpoints and services. | `string` | `"production"` | no |
 | network | GCE VPC used for compute instances | `string` | `"default"` | no |
 | node\_count | Number of ES nodes to deploy. | `number` | `1` | no |

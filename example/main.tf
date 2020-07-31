@@ -104,9 +104,9 @@ output "ilb_dns" {
 
 
 output "ip_address_with_suffix" {
-  value = module.elasticsearch_stage.ip_address
+  value = module.elasticsearch_second_prod.ip_address
 }
 
 output "ilb_dns_with_suffix" {
-  value = module.elasticsearch_stage.ilb_dns
+  value = module.elasticsearch_second_prod.ilb_dns
 }
