@@ -1,5 +1,4 @@
 provider "kubernetes" {
-  version                = "~> 1.11.0"
   load_config_file       = false
   host                   = "https://${var.cluster_endpoint}"
   username               = var.cluster_user

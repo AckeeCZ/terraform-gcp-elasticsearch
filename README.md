@@ -41,7 +41,6 @@ pre-commit install
 | Name | Version |
 |------|---------|
 | terraform | >= 0.12 |
-| kubernetes | ~> 1.11.0 |
 
 ## Providers
 
@@ -49,7 +48,7 @@ pre-commit install
 |------|---------|
 | google | n/a |
 | google-beta | n/a |
-| kubernetes | ~> 1.11.0 |
+| kubernetes | n/a |
 | random | n/a |
 | tls | n/a |
 
