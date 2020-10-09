@@ -21,8 +21,9 @@ module "elasticsearch_prod" {
   cluster_ipv4_cidr = "10.128.0.0/14"
   node_count        = "3"
   heap_size         = "1500m"
+                      # in case you don't have image, leave empty: `raw_image_source = ""`
   raw_image_source  = "https://storage.googleapis.com/ackee-images/ackee-elasticsearch-7-disk-79.tar.gz"
-  data_disk_size    = "10"
+  data_disk_size    = "100"
 }
 ```
 
