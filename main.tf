@@ -20,6 +20,12 @@ locals {
       cluster_name = var.cluster_name
     }
   )
+  elasticsearch_fluentd = templatefile(
+    "${path.module}/fluentd.conf.tpl",
+    {
+      cluster_name = var.cluster_name
+    }
+  )
   master_list = join(",",
     [
       for i in range(var.node_count) :
@@ -97,6 +103,7 @@ resource "google_compute_instance" "elasticsearch" {
 export MASTER_LIST=${local.master_list}
 
 base64 -d <<< "${base64encode(local.elasticsearch_configuration)}" > /tmp/elasticsearch.yml
+base64 -d <<< "${base64encode(local.elasticsearch_fluentd)}" > /etc/google-fluentd/config.d/${var.cluster_name}.conf
 base64 -d <<< "${google_service_account_key.elasticsearch_backup.private_key}" > /tmp/backup-sa.key
 base64 -d <<< "${filebase64("${path.module}/bootstrap.sh")}" > /tmp/bootstrap.sh
 
@@ -105,6 +112,8 @@ sed -i 's/^\\(-Xm[xs]\\).*/\\1${var.heap_size}/' /etc/elasticsearch/jvm.options
 /usr/share/elasticsearch/bin/elasticsearch-keystore add-file gcs.client.default.credentials_file /tmp/backup-sa.key
 rm /tmp/backup-sa.key
 bash /tmp/bootstrap.sh
+
+systemctl restart google-fluentd.service
 systemctl start elasticsearch.service
   EOT
   }
