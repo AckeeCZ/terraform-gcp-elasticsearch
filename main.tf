@@ -29,7 +29,7 @@ locals {
   master_list = join(",",
     [
       for i in range(var.node_count) :
-      "${var.instance_name}-${i}"
+      "${var.instance_name}-${i}${local.suffix}"
     ]
   )
   suffix = var.add_random_suffix ? "-${random_string.es_name_suffix[0].result}" : ""
