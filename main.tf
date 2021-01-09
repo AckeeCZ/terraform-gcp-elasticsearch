@@ -83,7 +83,7 @@ resource "google_compute_instance" "elasticsearch" {
     initialize_params {
       image = google_compute_image.elasticsearch.self_link
       type  = "pd-ssd"
-      size  = "10"
+      size  = var.root_disk_size
     }
   }
   attached_disk {

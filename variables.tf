@@ -65,6 +65,11 @@ variable "data_disk_size" {
   type        = string
 }
 
+variable "root_disk_size" {
+  description = "Persistent disk size specified in GB."
+  type        = string
+}
+
 variable "namespace" {
   default     = "production"
   description = "K8s namespace used to deploy endpoints and services."
