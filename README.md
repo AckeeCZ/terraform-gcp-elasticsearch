@@ -76,6 +76,7 @@ pre-commit install
 | project | Name of GCP project. | `string` | n/a | yes |
 | raw\_image\_source | URL of tar archive containing RAW source for ES image (you can use Packer image template to generate image, as mentioned above). | `string` | `"https://storage.googleapis.com/ackee-images/ackee-elasticsearch-7-disk-79.tar.gz"` | no |
 | region | Region of GCP project. | `string` | n/a | yes |
+| root\_disk\_size | Persistent disk size specified in GB. | `string` | n/a | yes |
 | zone | Zone of GCP project - optional parameter, if not set, the instances will be spread across the available zones. | `string` | `null` | no |
 
 ## Outputs

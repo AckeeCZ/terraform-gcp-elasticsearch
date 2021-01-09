@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [v8.5.0] - 2021-01-09
+### Added
+- Add variable for root disk size
+
 ## [v8.4.1] - 2021-01-07
 ### Fixed
 - Local variable `master_list` did not included random name suffix, which resulted in non-existing hostnames for bootstrap
