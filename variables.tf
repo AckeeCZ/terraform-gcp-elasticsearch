@@ -67,6 +67,7 @@ variable "data_disk_size" {
 
 variable "root_disk_size" {
   description = "Persistent disk size specified in GB."
+  default     = "10"
   type        = string
 }
 
