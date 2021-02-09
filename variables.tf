@@ -94,13 +94,8 @@ variable "cluster_ca_certificate" {
   type        = string
 }
 
-variable "cluster_user" {
-  description = "Cluster master username, keep always secret!"
-  type        = string
-}
-
-variable "cluster_password" {
-  description = "Cluster master password, keep always secret!"
+variable "cluster_token" {
+  description = "Cluster master token, keep always secret!"
   type        = string
 }
 
