@@ -1,19 +1,27 @@
 provider "template" {
-  version = "~> 2.1.2"
-}
-
-provider "tls" {
   version = "~> 2.2.0"
 }
 
+provider "tls" {
+  version = "~> 3.0.0"
+}
+
+provider "random" {
+  version = "~> 3.0.0"
+}
+
+provider "vault" {
+  version = "~> 2.17.0"
+}
+
 provider "google" {
-  version = "~> 3.39.0"
+  version = "~> 3.51.0"
   project = var.project
   region  = var.zone
 }
 
 provider "google-beta" {
-  version = "~> 3.39.0"
+  version = "~> 3.51.0"
   project = var.project
   region  = var.zone
 }
@@ -22,16 +30,8 @@ provider "kubernetes" {
   version = "~> 1.13.2"
 }
 
-provider "random" {
-  version = "~> 2.3.0"
-}
-
 provider "helm" {
   version = "~> 1.3.0"
-}
-
-provider "vault" {
-  version = "~> 2.14.0"
 }
 
 module "elasticsearch_prod" {
@@ -40,12 +40,14 @@ module "elasticsearch_prod" {
   region  = var.region
   zone    = var.zone
 
-  instance_name    = "elasticsearch-prod"
-  cluster_name     = "elasticsearch"
-  node_count       = 2
-  heap_size        = "1500m"
-  raw_image_source = "https://storage.googleapis.com/ackee-images/ackee-elasticsearch-7-disk-79.tar.gz"
-  data_disk_size   = "10"
+  instance_name          = "elasticsearch-prod"
+  cluster_name           = "elasticsearch"
+  node_count             = 2
+  heap_size              = "1500m"
+  raw_image_source       = "https://storage.googleapis.com/ackee-images/ackee-elasticsearch-7-disk-16.tar.gz"
+  data_disk_size         = "10"
+  root_disk_size         = "20"
+  backup_repository_name = "${var.project}-es1-backups"
 
   namespace = var.namespace
 
@@ -62,12 +64,15 @@ module "elasticsearch_second_prod" {
   project = var.project
   region  = var.region
 
-  instance_name    = "elasticsearch-prod-2"
-  cluster_name     = "elasticsearch"
-  node_count       = 2
-  heap_size        = "1500m"
-  raw_image_source = "https://storage.googleapis.com/ackee-images/ackee-elasticsearch-7-disk-79.tar.gz"
-  data_disk_size   = "10"
+  instance_name            = "elasticsearch-prod-2"
+  cluster_name             = "elasticsearch-2"
+  node_count               = 2
+  heap_size                = "1500m"
+  raw_image_source         = "https://storage.googleapis.com/ackee-images/ackee-elasticsearch-7-disk-16.tar.gz"
+  data_disk_size           = "10"
+  root_disk_size           = "20"
+  backup_repository_name   = "${var.project}-es-manual-backups"
+  backup_repository_create = false
 
   namespace = var.namespace
 
@@ -83,15 +88,16 @@ module "elasticsearch_second_prod" {
 }
 
 module "gke" {
-  source            = "git::ssh://git@gitlab.ack.ee/Infra/terraform-gke-vpc.git?ref=v7.2.0"
-  namespace         = var.namespace
-  project           = var.project
-  location          = var.zone
-  vault_secret_path = var.vault_secret_path
-  private           = false
-  min_nodes         = 1
-  max_nodes         = 1
-  cluster_name      = "es-service-test"
+  source                = "git::ssh://git@gitlab.ack.ee/Infra/terraform-gke-vpc.git?ref=v8.2.0"
+  namespace             = var.namespace
+  project               = var.project
+  location              = var.zone
+  vault_secret_path     = var.vault_secret_path
+  private               = false
+  min_nodes             = 1
+  max_nodes             = 1
+  cluster_name          = "es-service-test"
+  enable_sealed_secrets = false
 }
 
 variable "namespace" {

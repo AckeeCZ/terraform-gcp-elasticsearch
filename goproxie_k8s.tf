@@ -35,7 +35,7 @@ resource "kubernetes_stateful_set" "elasticsearch" {
 
           args = [
             "tcp-listen:9200,fork,reuseaddr",
-            "tcp-connect:es-ilb.${google_compute_forwarding_rule.elasticsearch.name}.il4.${var.region}.lb.${var.project}.internal:9200",
+            "tcp-connect:${local.ilb_dns}:9200",
           ]
           port {
             protocol       = "TCP"

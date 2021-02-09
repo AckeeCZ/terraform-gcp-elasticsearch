@@ -32,7 +32,8 @@ locals {
       "${var.instance_name}-${i}${local.suffix}"
     ]
   )
-  suffix = var.add_random_suffix ? "-${random_string.es_name_suffix[0].result}" : ""
+  suffix            = var.add_random_suffix ? "-${random_string.es_name_suffix[0].result}" : ""
+  backup_repository = var.backup_repository_name == "" ? "${var.project}-elasticsearch-backups${local.suffix}" : var.backup_repository_name
 }
 
 resource "google_service_account" "elasticsearch_backup" {
@@ -101,6 +102,7 @@ resource "google_compute_instance" "elasticsearch" {
 #!/bin/bash
 
 export MASTER_LIST=${local.master_list}
+export BACKUP_REPOSITORY=${local.backup_repository}
 
 base64 -d <<< "${base64encode(local.elasticsearch_configuration)}" > /tmp/elasticsearch.yml
 base64 -d <<< "${base64encode(local.elasticsearch_fluentd)}" > /etc/google-fluentd/config.d/${var.cluster_name}.conf
@@ -114,7 +116,6 @@ rm /tmp/backup-sa.key
 bash /tmp/bootstrap.sh
 
 systemctl restart google-fluentd.service
-systemctl start elasticsearch.service
   EOT
   }
 

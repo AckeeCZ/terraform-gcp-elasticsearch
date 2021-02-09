@@ -1,3 +1,7 @@
+locals {
+  ilb_dns = "es-ilb.${google_compute_forwarding_rule.elasticsearch.name}.il4.${var.region}.lb.${var.project}.internal"
+}
+
 data "google_compute_network" "default" {
   name    = var.network
   project = var.project
