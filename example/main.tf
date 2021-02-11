@@ -88,7 +88,8 @@ module "elasticsearch_second_prod" {
 }
 
 module "gke" {
-  source                = "git::ssh://git@gitlab.ack.ee/Infra/terraform-gke-vpc.git?ref=v8.2.0"
+  source                = "AckeeCZ/vpc/gke"
+  version               = "8.2.0"
   namespace             = var.namespace
   project               = var.project
   location              = var.zone
