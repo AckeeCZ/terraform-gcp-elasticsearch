@@ -64,8 +64,7 @@ pre-commit install
 | cluster\_ca\_certificate | Public CA certificate that is the root of trust for the GKE K8s cluster | `string` | n/a | yes |
 | cluster\_endpoint | Cluster control plane endpoint | `string` | n/a | yes |
 | cluster\_name | ES cluster name. | `string` | n/a | yes |
-| cluster\_password | Cluster master password, keep always secret! | `string` | n/a | yes |
-| cluster\_user | Cluster master username, keep always secret! | `string` | n/a | yes |
+| cluster\_token | Cluster master token, keep always secret! | `string` | n/a | yes |
 | data\_disk\_size | Persistent disk size specified in GB. | `string` | n/a | yes |
 | data\_disk\_type | Type of disk used as a persistent storage. | `string` | `"pd-ssd"` | no |
 | heap\_size | Heap size setting for ES. | `string` | `"1800m"` | no |

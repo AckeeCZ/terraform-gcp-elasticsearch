@@ -13,4 +13,3 @@ export TF_VAR_vault_secret_path=secret/devops/internal/path
 export TF_VAR_project=${GOOGLE_PROJECT}
 
 terraform init
-
