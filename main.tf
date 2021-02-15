@@ -20,6 +20,12 @@ locals {
       cluster_name = var.cluster_name
     }
   )
+  install_script = var.raw_image_source == "" ? templatefile(
+    "${path.module}/install.sh.tpl",
+    {
+      es_version = "7.9.2"
+    }
+  ) : "echo Installation omitted"
   elasticsearch_fluentd = templatefile(
     "${path.module}/fluentd.conf.tpl",
     {
@@ -54,7 +60,8 @@ resource "google_service_account_key" "elasticsearch_backup" {
 }
 
 resource "google_compute_image" "elasticsearch" {
-  name = "elasticsearch-image${local.suffix}"
+  count = var.raw_image_source == "" ? 0 : 1
+  name  = "elasticsearch-image${local.suffix}"
 
   raw_disk {
     source = var.raw_image_source
@@ -82,7 +89,7 @@ resource "google_compute_instance" "elasticsearch" {
 
   boot_disk {
     initialize_params {
-      image = google_compute_image.elasticsearch.self_link
+      image = var.raw_image_source == "" ? "ubuntu-os-cloud/ubuntu-1804-bionic-v20200923" : google_compute_image.elasticsearch[0].self_link
       type  = "pd-ssd"
       size  = var.root_disk_size
     }
@@ -108,6 +115,9 @@ base64 -d <<< "${base64encode(local.elasticsearch_configuration)}" > /tmp/elasti
 base64 -d <<< "${base64encode(local.elasticsearch_fluentd)}" > /etc/google-fluentd/config.d/${var.cluster_name}.conf
 base64 -d <<< "${google_service_account_key.elasticsearch_backup.private_key}" > /tmp/backup-sa.key
 base64 -d <<< "${filebase64("${path.module}/bootstrap.sh")}" > /tmp/bootstrap.sh
+base64 -d <<< "${base64encode(local.install_script)}" > /tmp/install.sh
+
+bash /tmp/install.sh
 
 mv /tmp/elasticsearch.yml /etc/elasticsearch
 sed -i 's/^\\(-Xm[xs]\\).*/\\1${var.heap_size}/' /etc/elasticsearch/jvm.options
