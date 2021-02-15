@@ -127,3 +127,9 @@ variable "backup_repository_create" {
   default     = true
   type        = bool
 }
+
+variable "custom_init_commands" {
+  description = "Any custom commands which should be run after bootstrapping the Elasticsearch cluster"
+  default     = ""
+  type        = string
+}
