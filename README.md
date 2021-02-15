@@ -12,7 +12,8 @@ It does a few things :
 
 ```hcl
 module "elasticsearch_prod" {
-  source            = "github.com/AckeeCZ/terraform-elasticsearch?ref=v5.4.0"
+  source = "AckeeCZ/elasticsearch/gcp"
+
   project           = "my-gcp-project"
   region            = "europe-west3"
   zone              = "europe-west3-c"
