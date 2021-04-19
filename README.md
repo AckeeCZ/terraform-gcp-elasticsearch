@@ -41,51 +41,82 @@ pre-commit install
 
 | Name | Version |
 |------|---------|
-| terraform | >= 0.12 |
+| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 0.12 |
 
 ## Providers
 
 | Name | Version |
 |------|---------|
-| google | n/a |
-| google-beta | n/a |
-| kubernetes | n/a |
-| random | n/a |
-| tls | n/a |
+| <a name="provider_google"></a> [google](#provider\_google) | n/a |
+| <a name="provider_google-beta"></a> [google-beta](#provider\_google-beta) | n/a |
+| <a name="provider_kubernetes"></a> [kubernetes](#provider\_kubernetes) | n/a |
+| <a name="provider_random"></a> [random](#provider\_random) | n/a |
+| <a name="provider_tls"></a> [tls](#provider\_tls) | n/a |
+
+## Modules
+
+No modules.
+
+## Resources
+
+| Name | Type |
+|------|------|
+| [google-beta_google_compute_forwarding_rule.elasticsearch](https://registry.terraform.io/providers/hashicorp/google-beta/latest/docs/resources/google_compute_forwarding_rule) | resource |
+| [google-beta_google_compute_health_check.elasticsearch](https://registry.terraform.io/providers/hashicorp/google-beta/latest/docs/resources/google_compute_health_check) | resource |
+| [google-beta_google_compute_instance_group.elasticsearch](https://registry.terraform.io/providers/hashicorp/google-beta/latest/docs/resources/google_compute_instance_group) | resource |
+| [google-beta_google_compute_region_backend_service.elasticsearch](https://registry.terraform.io/providers/hashicorp/google-beta/latest/docs/resources/google_compute_region_backend_service) | resource |
+| [google-beta_google_compute_subnetwork.proxy](https://registry.terraform.io/providers/hashicorp/google-beta/latest/docs/resources/google_compute_subnetwork) | resource |
+| [google_compute_disk.data](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/compute_disk) | resource |
+| [google_compute_firewall.elasticsearch_allow_external_subnets](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/compute_firewall) | resource |
+| [google_compute_firewall.elasticsearch_allow_external_tags](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/compute_firewall) | resource |
+| [google_compute_firewall.elasticsearch_allow_healthchecks](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/compute_firewall) | resource |
+| [google_compute_firewall.elasticsearch_allow_ilb_traffic](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/compute_firewall) | resource |
+| [google_compute_image.elasticsearch](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/compute_image) | resource |
+| [google_compute_instance.elasticsearch](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/compute_instance) | resource |
+| [google_project_iam_member.elasticsearch_backup_role](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/project_iam_member) | resource |
+| [google_service_account.elasticsearch_backup](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/service_account) | resource |
+| [google_service_account_key.elasticsearch_backup](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/service_account_key) | resource |
+| [google_storage_bucket.backup_repository](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/storage_bucket) | resource |
+| [kubernetes_cron_job.backup_cleanup](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/cron_job) | resource |
+| [kubernetes_stateful_set.elasticsearch](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/stateful_set) | resource |
+| [random_string.es_name_suffix](https://registry.terraform.io/providers/hashicorp/random/latest/docs/resources/string) | resource |
+| [tls_private_key.provision](https://registry.terraform.io/providers/hashicorp/tls/latest/docs/resources/private_key) | resource |
+| [google_compute_network.default](https://registry.terraform.io/providers/hashicorp/google/latest/docs/data-sources/compute_network) | data source |
+| [google_compute_zones.available](https://registry.terraform.io/providers/hashicorp/google/latest/docs/data-sources/compute_zones) | data source |
 
 ## Inputs
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
-| add\_random\_suffix | Add random suffix to all resources with possible duplicates if the same module is deployed multiple times | `bool` | `false` | no |
-| allowed\_ipv4\_subnets | IPv4 subnets allowed to communicate with ES instances. | `list(string)` | `[]` | no |
-| allowed\_tags | Network tags allowed to communicate with ES instances. | `list(string)` | `[]` | no |
-| backup\_repository\_create | If GCS bucket should be created. Set to false, if you previously created bucket | `bool` | `true` | no |
-| backup\_repository\_name | Custom name of Elasticsearch backup repository, same name is going to be used for backup bucket | `string` | `""` | no |
-| cluster\_ca\_certificate | Public CA certificate that is the root of trust for the GKE K8s cluster | `string` | n/a | yes |
-| cluster\_endpoint | Cluster control plane endpoint | `string` | n/a | yes |
-| cluster\_name | ES cluster name. | `string` | n/a | yes |
-| cluster\_token | Cluster master token, keep always secret! | `string` | n/a | yes |
-| data\_disk\_size | Persistent disk size specified in GB. | `string` | n/a | yes |
-| data\_disk\_type | Type of disk used as a persistent storage. | `string` | `"pd-ssd"` | no |
-| heap\_size | Heap size setting for ES. | `string` | `"1800m"` | no |
-| instance\_name | Base for GCE instances name. Must be unique within GCP project | `string` | n/a | yes |
-| load\_balancer\_subnetwork | The subnetwork that the load balanced IP should belong to for this Forwarding Rule. If the network specified is in auto subnet mode, this field is optional. However, if the network is in custom subnet mode, a subnetwork must be specified. | `string` | `"10.64.0.0/26"` | no |
-| machine\_type | The machine type to create | `string` | `"n1-standard-1"` | no |
-| namespace | K8s namespace used to deploy endpoints and services. | `string` | `"production"` | no |
-| network | GCE VPC used for compute instances | `string` | `"default"` | no |
-| node\_count | Number of ES nodes to deploy. | `number` | `1` | no |
-| project | Name of GCP project. | `string` | n/a | yes |
-| raw\_image\_source | URL of tar archive containing RAW source for ES image (you can use Packer image template to generate image, as mentioned above). | `string` | `"https://storage.googleapis.com/ackee-images/ackee-elasticsearch-7-disk-79.tar.gz"` | no |
-| region | Region of GCP project. | `string` | n/a | yes |
-| root\_disk\_size | Persistent disk size specified in GB. | `string` | `"10"` | no |
-| zone | Zone of GCP project - optional parameter, if not set, the instances will be spread across the available zones. | `string` | `null` | no |
+| <a name="input_add_random_suffix"></a> [add\_random\_suffix](#input\_add\_random\_suffix) | Add random suffix to all resources with possible duplicates if the same module is deployed multiple times | `bool` | `false` | no |
+| <a name="input_allowed_ipv4_subnets"></a> [allowed\_ipv4\_subnets](#input\_allowed\_ipv4\_subnets) | IPv4 subnets allowed to communicate with ES instances. | `list(string)` | `[]` | no |
+| <a name="input_allowed_tags"></a> [allowed\_tags](#input\_allowed\_tags) | Network tags allowed to communicate with ES instances. | `list(string)` | `[]` | no |
+| <a name="input_backup_repository_create"></a> [backup\_repository\_create](#input\_backup\_repository\_create) | If GCS bucket should be created. Set to false, if you previously created bucket | `bool` | `true` | no |
+| <a name="input_backup_repository_name"></a> [backup\_repository\_name](#input\_backup\_repository\_name) | Custom name of Elasticsearch backup repository, same name is going to be used for backup bucket | `string` | `""` | no |
+| <a name="input_cluster_ca_certificate"></a> [cluster\_ca\_certificate](#input\_cluster\_ca\_certificate) | Public CA certificate that is the root of trust for the GKE K8s cluster | `string` | n/a | yes |
+| <a name="input_cluster_endpoint"></a> [cluster\_endpoint](#input\_cluster\_endpoint) | Cluster control plane endpoint | `string` | n/a | yes |
+| <a name="input_cluster_name"></a> [cluster\_name](#input\_cluster\_name) | ES cluster name. | `string` | n/a | yes |
+| <a name="input_cluster_token"></a> [cluster\_token](#input\_cluster\_token) | Cluster master token, keep always secret! | `string` | n/a | yes |
+| <a name="input_custom_init_commands"></a> [custom\_init\_commands](#input\_custom\_init\_commands) | Any custom commands which should be run after bootstrapping the Elasticsearch cluster | `string` | `""` | no |
+| <a name="input_data_disk_size"></a> [data\_disk\_size](#input\_data\_disk\_size) | Persistent disk size specified in GB. | `string` | n/a | yes |
+| <a name="input_data_disk_type"></a> [data\_disk\_type](#input\_data\_disk\_type) | Type of disk used as a persistent storage. | `string` | `"pd-ssd"` | no |
+| <a name="input_heap_size"></a> [heap\_size](#input\_heap\_size) | Heap size setting for ES. | `string` | `"1800m"` | no |
+| <a name="input_instance_name"></a> [instance\_name](#input\_instance\_name) | Base for GCE instances name. Must be unique within GCP project | `string` | n/a | yes |
+| <a name="input_load_balancer_subnetwork"></a> [load\_balancer\_subnetwork](#input\_load\_balancer\_subnetwork) | The subnetwork that the load balanced IP should belong to for this Forwarding Rule. If the network specified is in auto subnet mode, this field is optional. However, if the network is in custom subnet mode, a subnetwork must be specified. | `string` | `"10.64.0.0/26"` | no |
+| <a name="input_machine_type"></a> [machine\_type](#input\_machine\_type) | The machine type to create | `string` | `"n1-standard-1"` | no |
+| <a name="input_namespace"></a> [namespace](#input\_namespace) | K8s namespace used to deploy endpoints and services. | `string` | `"production"` | no |
+| <a name="input_network"></a> [network](#input\_network) | GCE VPC used for compute instances | `string` | `"default"` | no |
+| <a name="input_node_count"></a> [node\_count](#input\_node\_count) | Number of ES nodes to deploy. | `number` | `1` | no |
+| <a name="input_project"></a> [project](#input\_project) | Name of GCP project. | `string` | n/a | yes |
+| <a name="input_raw_image_source"></a> [raw\_image\_source](#input\_raw\_image\_source) | URL of tar archive containing RAW source for ES image (you can use Packer image template to generate image, as mentioned above). | `string` | `"https://storage.googleapis.com/ackee-images/ackee-elasticsearch-7-disk-79.tar.gz"` | no |
+| <a name="input_region"></a> [region](#input\_region) | Region of GCP project. | `string` | n/a | yes |
+| <a name="input_root_disk_size"></a> [root\_disk\_size](#input\_root\_disk\_size) | Persistent disk size specified in GB. | `string` | `"10"` | no |
+| <a name="input_zone"></a> [zone](#input\_zone) | Zone of GCP project - optional parameter, if not set, the instances will be spread across the available zones. | `string` | `null` | no |
 
 ## Outputs
 
 | Name | Description |
 |------|-------------|
-| ilb\_dns | DNS name follows GCP internal rule SERVICE\_LABEL.FORWARDING\_RULE\_NAME.il4.REGION.lb.PROJECT\_ID.internal |
-| ip\_address | The internal IP assigned to the regional forwarding rule. |
-
+| <a name="output_ilb_dns"></a> [ilb\_dns](#output\_ilb\_dns) | DNS name follows GCP internal rule SERVICE\_LABEL.FORWARDING\_RULE\_NAME.il4.REGION.lb.PROJECT\_ID.internal |
+| <a name="output_ip_address"></a> [ip\_address](#output\_ip\_address) | The internal IP assigned to the regional forwarding rule. |
 <!-- END OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
