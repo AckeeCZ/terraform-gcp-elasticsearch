@@ -27,11 +27,11 @@ provider "google-beta" {
 }
 
 provider "kubernetes" {
-  version = "~> 1.13.2"
+  version = "~> 2.1.0"
 }
 
 provider "helm" {
-  version = "~> 1.3.0"
+  version = "~> 2.0.0"
 }
 
 module "elasticsearch_prod" {
@@ -52,7 +52,7 @@ module "elasticsearch_prod" {
   namespace = var.namespace
 
   cluster_ca_certificate = module.gke.cluster_ca_certificate
-  cluster_token          = module.gke.cluster_token
+  cluster_token          = module.gke.access_token
   cluster_endpoint       = module.gke.endpoint
 
   allowed_ipv4_subnets = [module.gke.cluster_ipv4_cidr]
@@ -76,7 +76,7 @@ module "elasticsearch_second_prod" {
   namespace = var.namespace
 
   cluster_ca_certificate = module.gke.cluster_ca_certificate
-  cluster_token          = module.gke.cluster_token
+  cluster_token          = module.gke.access_token
   cluster_endpoint       = module.gke.endpoint
 
   allowed_ipv4_subnets = [module.gke.cluster_ipv4_cidr]

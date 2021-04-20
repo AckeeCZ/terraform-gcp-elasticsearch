@@ -43,11 +43,11 @@ resource "kubernetes_stateful_set" "elasticsearch" {
             host_port      = 9200
           }
           resources {
-            limits {
+            limits = {
               cpu    = "100m"
               memory = "100Mi"
             }
-            requests {
+            requests = {
               cpu    = "10m"
               memory = "10Mi"
             }
