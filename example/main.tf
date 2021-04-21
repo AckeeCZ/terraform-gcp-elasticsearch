@@ -15,7 +15,7 @@ provider "vault" {
 }
 
 provider "google" {
-  version = "~> 3.64.0"
+  version = "~> 3.65.0"
   project = var.project
   region  = var.zone
 }
