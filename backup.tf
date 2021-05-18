@@ -1,7 +1,7 @@
 resource "google_storage_bucket" "backup_repository" {
   name          = local.backup_repository
   location      = var.region
-  storage_class = "STANDARD"
+  storage_class = var.backup_storage_class
   force_destroy = true
   count         = var.backup_repository_create ? 1 : 0
 }
@@ -12,9 +12,9 @@ resource "kubernetes_cron_job" "backup_cleanup" {
   }
   spec {
     concurrency_policy            = "Replace"
-    failed_jobs_history_limit     = 5
-    schedule                      = "0 3 * * *"
-    successful_jobs_history_limit = 3
+    failed_jobs_history_limit     = var.backup_failed_jobs_history_limit
+    schedule                      = var.backup_schedule
+    successful_jobs_history_limit = var.backup_successful_jobs_history_limit
     job_template {
       metadata {}
       spec {
