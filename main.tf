@@ -4,7 +4,7 @@ data "google_compute_zones" "available" {
 }
 
 resource "random_string" "es_name_suffix" {
-  length  = 8
+  length  = var.es_name_suffix_length
   special = false
   upper   = false
   count   = var.add_random_suffix ? 1 : 0
@@ -60,7 +60,7 @@ resource "google_compute_image" "elasticsearch" {
     source = var.raw_image_source
   }
   timeouts {
-    create = "10m"
+    create = var.es_image_creation_timeout
   }
 }
 

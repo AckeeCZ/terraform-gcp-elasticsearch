@@ -133,3 +133,39 @@ variable "custom_init_commands" {
   default     = ""
   type        = string
 }
+
+variable "backup_storage_class" {
+  description = "The storage class you set for an object affects the object's availability and pricing model"
+  default     = "STANDARD"
+  type        = string
+}
+
+variable "backup_schedule" {
+  description = "Backup schedule in cron format"
+  default     = "0 3 * * *"
+  type        = string
+}
+
+variable "backup_failed_jobs_history_limit" {
+  description = "Set retention for failed jobs history"
+  default     = 5
+  type        = number
+}
+
+variable "backup_successful_jobs_history_limit" {
+  description = "Set retention for successful jobs history"
+  default     = 3
+  type        = number
+}
+
+variable "es_name_suffix_length" {
+  description = "Length of random generated suffix for ES name"
+  default     = 8
+  type        = number
+}
+
+variable "es_image_creation_timeout" {
+  description = "Timeout for creating ES image"
+  default     = "10m"
+  type        = string
+}
