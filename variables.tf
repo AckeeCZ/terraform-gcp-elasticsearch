@@ -169,3 +169,9 @@ variable "es_image_creation_timeout" {
   default     = "10m"
   type        = string
 }
+
+variable "enable_health_check_logging" {
+  description = "Enable health check logging"
+  default     = false
+  type        = bool
+}

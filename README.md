@@ -91,8 +91,12 @@ No modules.
 | <a name="input_add_random_suffix"></a> [add\_random\_suffix](#input\_add\_random\_suffix) | Add random suffix to all resources with possible duplicates if the same module is deployed multiple times | `bool` | `false` | no |
 | <a name="input_allowed_ipv4_subnets"></a> [allowed\_ipv4\_subnets](#input\_allowed\_ipv4\_subnets) | IPv4 subnets allowed to communicate with ES instances. | `list(string)` | `[]` | no |
 | <a name="input_allowed_tags"></a> [allowed\_tags](#input\_allowed\_tags) | Network tags allowed to communicate with ES instances. | `list(string)` | `[]` | no |
+| <a name="input_backup_failed_jobs_history_limit"></a> [backup\_failed\_jobs\_history\_limit](#input\_backup\_failed\_jobs\_history\_limit) | Set retention for failed jobs history | `number` | `5` | no |
 | <a name="input_backup_repository_create"></a> [backup\_repository\_create](#input\_backup\_repository\_create) | If GCS bucket should be created. Set to false, if you previously created bucket | `bool` | `true` | no |
 | <a name="input_backup_repository_name"></a> [backup\_repository\_name](#input\_backup\_repository\_name) | Custom name of Elasticsearch backup repository, same name is going to be used for backup bucket | `string` | `""` | no |
+| <a name="input_backup_schedule"></a> [backup\_schedule](#input\_backup\_schedule) | Backup schedule in cron format | `string` | `"0 3 * * *"` | no |
+| <a name="input_backup_storage_class"></a> [backup\_storage\_class](#input\_backup\_storage\_class) | The storage class you set for an object affects the object's availability and pricing model | `string` | `"STANDARD"` | no |
+| <a name="input_backup_successful_jobs_history_limit"></a> [backup\_successful\_jobs\_history\_limit](#input\_backup\_successful\_jobs\_history\_limit) | Set retention for successful jobs history | `number` | `3` | no |
 | <a name="input_cluster_ca_certificate"></a> [cluster\_ca\_certificate](#input\_cluster\_ca\_certificate) | Public CA certificate that is the root of trust for the GKE K8s cluster | `string` | n/a | yes |
 | <a name="input_cluster_endpoint"></a> [cluster\_endpoint](#input\_cluster\_endpoint) | Cluster control plane endpoint | `string` | n/a | yes |
 | <a name="input_cluster_name"></a> [cluster\_name](#input\_cluster\_name) | ES cluster name. | `string` | n/a | yes |
@@ -100,6 +104,9 @@ No modules.
 | <a name="input_custom_init_commands"></a> [custom\_init\_commands](#input\_custom\_init\_commands) | Any custom commands which should be run after bootstrapping the Elasticsearch cluster | `string` | `""` | no |
 | <a name="input_data_disk_size"></a> [data\_disk\_size](#input\_data\_disk\_size) | Persistent disk size specified in GB. | `string` | n/a | yes |
 | <a name="input_data_disk_type"></a> [data\_disk\_type](#input\_data\_disk\_type) | Type of disk used as a persistent storage. | `string` | `"pd-ssd"` | no |
+| <a name="input_enable_health_check_logging"></a> [enable\_health\_check\_logging](#input\_enable\_health\_check\_logging) | Enable health check logging | `bool` | `false` | no |
+| <a name="input_es_image_creation_timeout"></a> [es\_image\_creation\_timeout](#input\_es\_image\_creation\_timeout) | Timeout for creating ES image | `string` | `"10m"` | no |
+| <a name="input_es_name_suffix_length"></a> [es\_name\_suffix\_length](#input\_es\_name\_suffix\_length) | Length of random generated suffix for ES name | `number` | `8` | no |
 | <a name="input_heap_size"></a> [heap\_size](#input\_heap\_size) | Heap size setting for ES. | `string` | `"1800m"` | no |
 | <a name="input_instance_name"></a> [instance\_name](#input\_instance\_name) | Base for GCE instances name. Must be unique within GCP project | `string` | n/a | yes |
 | <a name="input_load_balancer_subnetwork"></a> [load\_balancer\_subnetwork](#input\_load\_balancer\_subnetwork) | The subnetwork that the load balanced IP should belong to for this Forwarding Rule. If the network specified is in auto subnet mode, this field is optional. However, if the network is in custom subnet mode, a subnetwork must be specified. | `string` | `"10.64.0.0/26"` | no |

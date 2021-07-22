@@ -80,6 +80,9 @@ resource "google_compute_health_check" "elasticsearch" {
   tcp_health_check {
     port = "9200"
   }
+  log_config {
+    enable = var.enable_health_check_logging
+  }
 }
 
 resource "google_compute_region_backend_service" "elasticsearch" {
