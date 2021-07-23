@@ -175,3 +175,21 @@ variable "enable_health_check_logging" {
   default     = false
   type        = bool
 }
+
+variable "health_check_interval_sec" {
+  description = "How often (in seconds) to send a health check. The default value is 5 seconds."
+  default     = 1
+  type        = number
+}
+
+variable "health_check_timeout_sec" {
+  description = "How long (in seconds) to wait before claiming failure. The default value is 5 seconds. It is invalid for timeoutSec to have greater value than checkIntervalSec."
+  default     = 1
+  type        = number
+}
+
+variable "backend_service_timeout_sec" {
+  description = "How many seconds to wait for the backend before considering it a failed request. Default is 30 seconds. Valid range is [1, 86400]."
+  default     = 30
+  type        = number
+}

@@ -91,6 +91,7 @@ No modules.
 | <a name="input_add_random_suffix"></a> [add\_random\_suffix](#input\_add\_random\_suffix) | Add random suffix to all resources with possible duplicates if the same module is deployed multiple times | `bool` | `false` | no |
 | <a name="input_allowed_ipv4_subnets"></a> [allowed\_ipv4\_subnets](#input\_allowed\_ipv4\_subnets) | IPv4 subnets allowed to communicate with ES instances. | `list(string)` | `[]` | no |
 | <a name="input_allowed_tags"></a> [allowed\_tags](#input\_allowed\_tags) | Network tags allowed to communicate with ES instances. | `list(string)` | `[]` | no |
+| <a name="input_backend_service_timeout_sec"></a> [backend\_service\_timeout\_sec](#input\_backend\_service\_timeout\_sec) | How many seconds to wait for the backend before considering it a failed request. Default is 30 seconds. Valid range is [1, 86400]. | `number` | `30` | no |
 | <a name="input_backup_failed_jobs_history_limit"></a> [backup\_failed\_jobs\_history\_limit](#input\_backup\_failed\_jobs\_history\_limit) | Set retention for failed jobs history | `number` | `5` | no |
 | <a name="input_backup_repository_create"></a> [backup\_repository\_create](#input\_backup\_repository\_create) | If GCS bucket should be created. Set to false, if you previously created bucket | `bool` | `true` | no |
 | <a name="input_backup_repository_name"></a> [backup\_repository\_name](#input\_backup\_repository\_name) | Custom name of Elasticsearch backup repository, same name is going to be used for backup bucket | `string` | `""` | no |
@@ -107,6 +108,8 @@ No modules.
 | <a name="input_enable_health_check_logging"></a> [enable\_health\_check\_logging](#input\_enable\_health\_check\_logging) | Enable health check logging | `bool` | `false` | no |
 | <a name="input_es_image_creation_timeout"></a> [es\_image\_creation\_timeout](#input\_es\_image\_creation\_timeout) | Timeout for creating ES image | `string` | `"10m"` | no |
 | <a name="input_es_name_suffix_length"></a> [es\_name\_suffix\_length](#input\_es\_name\_suffix\_length) | Length of random generated suffix for ES name | `number` | `8` | no |
+| <a name="input_health_check_interval_sec"></a> [health\_check\_interval\_sec](#input\_health\_check\_interval\_sec) | How often (in seconds) to send a health check. The default value is 5 seconds. | `number` | `1` | no |
+| <a name="input_health_check_timeout_sec"></a> [health\_check\_timeout\_sec](#input\_health\_check\_timeout\_sec) | How long (in seconds) to wait before claiming failure. The default value is 5 seconds. It is invalid for timeoutSec to have greater value than checkIntervalSec. | `number` | `1` | no |
 | <a name="input_heap_size"></a> [heap\_size](#input\_heap\_size) | Heap size setting for ES. | `string` | `"1800m"` | no |
 | <a name="input_instance_name"></a> [instance\_name](#input\_instance\_name) | Base for GCE instances name. Must be unique within GCP project | `string` | n/a | yes |
 | <a name="input_load_balancer_subnetwork"></a> [load\_balancer\_subnetwork](#input\_load\_balancer\_subnetwork) | The subnetwork that the load balanced IP should belong to for this Forwarding Rule. If the network specified is in auto subnet mode, this field is optional. However, if the network is in custom subnet mode, a subnetwork must be specified. | `string` | `"10.64.0.0/26"` | no |
