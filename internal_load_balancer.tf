@@ -75,8 +75,8 @@ resource "google_compute_health_check" "elasticsearch" {
   provider = google-beta
 
   name               = "elasticsearch-healthcheck${local.suffix}"
-  check_interval_sec = 1
-  timeout_sec        = 1
+  check_interval_sec = var.health_check_interval_sec
+  timeout_sec        = var.health_check_timeout_sec
   tcp_health_check {
     port = "9200"
   }
@@ -90,7 +90,7 @@ resource "google_compute_region_backend_service" "elasticsearch" {
 
   name                  = "elasticsearch-lb${local.suffix}"
   protocol              = "TCP"
-  timeout_sec           = 30
+  timeout_sec           = var.backend_service_timeout_sec
   load_balancing_scheme = "INTERNAL"
 
   region = var.region
