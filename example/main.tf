@@ -87,7 +87,7 @@ module "elasticsearch_second_prod" {
 
 module "gke" {
   source                = "AckeeCZ/vpc/gke"
-  version               = "9.5.0"
+  version               = "9.6.1"
   namespace             = var.namespace
   project               = var.project
   location              = var.zone
