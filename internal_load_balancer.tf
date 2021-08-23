@@ -74,11 +74,16 @@ resource "google_compute_instance_group" "elasticsearch" {
 resource "google_compute_health_check" "elasticsearch" {
   provider = google-beta
 
-  name               = "elasticsearch-healthcheck${local.suffix}"
-  check_interval_sec = var.health_check_interval_sec
-  timeout_sec        = var.health_check_timeout_sec
-  tcp_health_check {
-    port = "9200"
+  name                = "http-elasticsearch-healthcheck${local.suffix}"
+  check_interval_sec  = var.health_check_interval_sec
+  timeout_sec         = var.health_check_timeout_sec
+  healthy_threshold   = var.health_check_healthy_threshold
+  unhealthy_threshold = var.health_check_unhealthy_threshold
+
+  # https://discuss.elastic.co/t/best-url-for-load-balancer-http-health-check/19272
+  http_health_check {
+    port         = "9200"
+    request_path = "/"
   }
   log_config {
     enable = var.enable_health_check_logging
