@@ -184,7 +184,19 @@ variable "health_check_interval_sec" {
 
 variable "health_check_timeout_sec" {
   description = "How long (in seconds) to wait before claiming failure. The default value is 5 seconds. It is invalid for timeoutSec to have greater value than checkIntervalSec."
-  default     = 1
+  default     = 5
+  type        = number
+}
+
+variable "health_check_healthy_threshold" {
+  description = "How many consecutive successes must occur to mark a VM instance healthy."
+  default     = 2
+  type        = number
+}
+
+variable "health_check_unhealthy_threshold" {
+  description = "How many consecutive failures must occur to mark a VM instance unhealthy."
+  default     = 2
   type        = number
 }
 

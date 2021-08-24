@@ -4,6 +4,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [v10.0.0] - 2021-08-23
+### Changed
+- Change `google_compute_health_check` from `TCP` to `HTTP`
+### Added 
+- Add `health_check_healthy_threshold` var, default set to `2` 
+- Add `health_check_unhealthy_threshold` var, default set to `2` 
+
 ## [v9.6.0] - 2021-07-23
 ### Added
 - Add variables for health check management
