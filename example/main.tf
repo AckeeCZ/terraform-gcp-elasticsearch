@@ -31,7 +31,7 @@ provider "kubernetes" {
 }
 
 provider "helm" {
-  version = "~> 2.1.0"
+  version = "~> 2.2.0"
 }
 
 module "elasticsearch_prod" {
