@@ -27,7 +27,7 @@ provider "google-beta" {
 }
 
 provider "kubernetes" {
-  version = "~> 2.2.0"
+  version = "~> 2.4.0"
 }
 
 provider "helm" {
