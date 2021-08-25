@@ -88,6 +88,9 @@ resource "google_compute_health_check" "elasticsearch" {
   log_config {
     enable = var.enable_health_check_logging
   }
+  lifecycle {
+    create_before_destroy = true
+  }
 }
 
 resource "google_compute_region_backend_service" "elasticsearch" {

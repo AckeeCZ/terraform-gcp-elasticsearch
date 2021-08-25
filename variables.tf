@@ -178,7 +178,7 @@ variable "enable_health_check_logging" {
 
 variable "health_check_interval_sec" {
   description = "How often (in seconds) to send a health check. The default value is 5 seconds."
-  default     = 1
+  default     = 5
   type        = number
 }
 
