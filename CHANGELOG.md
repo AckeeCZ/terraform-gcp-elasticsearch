@@ -4,6 +4,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [v11.0.0] - 2021-11-10
+### Changed
+ - Updated minimum TF version to 1.0
+ - Updated TF provider version in example to latest versions
+ - Convert provider lockings in example to TF0.15+ format
+
 ## [v10.0.1] - 2021-08-25
 ### Fixed
 - Fix default value for `health_check_interval_sec` var, it has to be greater or equal to `health_check_timeout_sec`
