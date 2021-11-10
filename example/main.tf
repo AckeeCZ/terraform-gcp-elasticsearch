@@ -1,39 +1,3 @@
-provider "template" {
-  version = "~> 2.2.0"
-}
-
-provider "tls" {
-  version = "~> 3.1.0"
-}
-
-provider "random" {
-  version = "~> 3.1.0"
-}
-
-provider "vault" {
-  version = "~> 2.23.0"
-}
-
-provider "google" {
-  version = "~> 3.81.0"
-  project = var.project
-  region  = var.zone
-}
-
-provider "google-beta" {
-  version = "~> 3.81.0"
-  project = var.project
-  region  = var.zone
-}
-
-provider "kubernetes" {
-  version = "~> 2.4.0"
-}
-
-provider "helm" {
-  version = "~> 2.2.0"
-}
-
 module "elasticsearch_prod" {
   source  = "./.."
   project = var.project
@@ -44,7 +8,7 @@ module "elasticsearch_prod" {
   cluster_name           = "elasticsearch"
   node_count             = 2
   heap_size              = "1500m"
-  raw_image_source       = "https://storage.googleapis.com/ackee-images/ackee-elasticsearch-7-disk-16.tar.gz"
+  raw_image_source       = "https://storage.googleapis.com/ackee-images/ackee-elasticsearch-7-disk-1636542652.tar.gz"
   data_disk_size         = "10"
   root_disk_size         = "20"
   backup_repository_name = "${var.project}-es1-backups"
@@ -67,7 +31,7 @@ module "elasticsearch_second_prod" {
   cluster_name             = "elasticsearch-2"
   node_count               = 2
   heap_size                = "1500m"
-  raw_image_source         = "https://storage.googleapis.com/ackee-images/ackee-elasticsearch-7-disk-16.tar.gz"
+  raw_image_source         = "https://storage.googleapis.com/ackee-images/ackee-elasticsearch-7-disk-1636542652.tar.gz"
   data_disk_size           = "10"
   root_disk_size           = "20"
   backup_repository_name   = "${var.project}-es-manual-backups"
@@ -87,14 +51,14 @@ module "elasticsearch_second_prod" {
 
 module "gke" {
   source                = "AckeeCZ/vpc/gke"
-  version               = "9.6.1"
+  version               = "10.0.0"
   namespace             = var.namespace
   project               = var.project
   location              = var.zone
   vault_secret_path     = var.vault_secret_path
   private               = false
-  min_nodes             = 1
-  max_nodes             = 1
+  min_nodes             = 2
+  max_nodes             = 2
   cluster_name          = "es-service-test"
   enable_sealed_secrets = false
 }
@@ -124,7 +88,6 @@ output "ip_address" {
 output "ilb_dns" {
   value = module.elasticsearch_prod.ilb_dns
 }
-
 
 output "ip_address_with_suffix" {
   value = module.elasticsearch_second_prod.ip_address
