@@ -24,6 +24,8 @@ ADDTEXT
 
 fi
 
+base64 -d <<< $(echo $PRE_START_CMD) | source /dev/stdin
+
 # start elasticsearch server to inspect if cluster is fully discovered and master nodes have been selected
 #
 # /dev/full usage relates to https://stackoverflow.com/questions/15265228/pipe-to-multiple-files-but-not-stdout

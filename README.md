@@ -14,18 +14,26 @@ It does a few things :
 module "elasticsearch_prod" {
   source = "AckeeCZ/elasticsearch/gcp"
 
-  project           = "my-gcp-project"
-  region            = "europe-west3"
-  zone              = "europe-west3-c"
-  instance_name     = "elasticsearch-prod"
-  cluster_name      = "elasticsearch"
-  cluster_ipv4_cidr = "10.128.0.0/14"
-  node_count        = "3"
-  heap_size         = "1500m"
-  raw_image_source  = "https://storage.googleapis.com/ackee-images/ackee-elasticsearch-7-disk-79.tar.gz"
-  data_disk_size    = "10"
+  project                   = "my-gcp-project"
+  region                    = "europe-west3"
+  zone                      = "europe-west3-c"
+  instance_name             = "elasticsearch-prod"
+  cluster_name              = "elasticsearch"
+  cluster_ipv4_cidr         = "10.128.0.0/14"
+  node_count                = "3"
+  heap_size                 = "1500m"
+  raw_image_source          = "https://storage.googleapis.com/ackee-images/ackee-elasticsearch-7-disk-79.tar.gz"
+  data_disk_size            = "10"
+  custom_pre_start_commands = "/usr/share/elasticsearch/bin/elasticsearch-plugin install -b analysis-stempel"
 }
 ```
+
+## Running plugins needed for index startup
+
+If you need some plugins that is required for index startup (e.g., [analysis-stempel](https://www.elastic.co/guide/en/elasticsearch/plugins/current/analysis-stempel.html)),
+ you must install them utilizing `custom_pre_start_commands` variable, which is called before running `systemctl start elasticsearch`.
+
+See Usage part above for example with `analysis-stempel` plugin installation
 
 ## Before you do anything in this module
 
@@ -102,7 +110,8 @@ No modules.
 | <a name="input_cluster_endpoint"></a> [cluster\_endpoint](#input\_cluster\_endpoint) | Cluster control plane endpoint | `string` | n/a | yes |
 | <a name="input_cluster_name"></a> [cluster\_name](#input\_cluster\_name) | ES cluster name. | `string` | n/a | yes |
 | <a name="input_cluster_token"></a> [cluster\_token](#input\_cluster\_token) | Cluster master token, keep always secret! | `string` | n/a | yes |
-| <a name="input_custom_init_commands"></a> [custom\_init\_commands](#input\_custom\_init\_commands) | Any custom commands which should be run after bootstrapping the Elasticsearch cluster | `string` | `""` | no |
+| <a name="input_custom_init_commands"></a> [custom\_init\_commands](#input\_custom\_init\_commands) | Any custom commands which should be run after bootstrapping the Elasticsearch cluster after starting Elasticsearch service | `string` | `""` | no |
+| <a name="input_custom_pre_start_commands"></a> [custom\_pre\_start\_commands](#input\_custom\_pre\_start\_commands) | Any custom commands which should be run after bootstrapping the Elasticsearch cluster before starting Elasticsearch service | `string` | `""` | no |
 | <a name="input_data_disk_size"></a> [data\_disk\_size](#input\_data\_disk\_size) | Persistent disk size specified in GB. | `string` | n/a | yes |
 | <a name="input_data_disk_type"></a> [data\_disk\_type](#input\_data\_disk\_type) | Type of disk used as a persistent storage. | `string` | `"pd-ssd"` | no |
 | <a name="input_enable_health_check_logging"></a> [enable\_health\_check\_logging](#input\_enable\_health\_check\_logging) | Enable health check logging | `bool` | `false` | no |

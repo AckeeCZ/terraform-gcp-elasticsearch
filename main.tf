@@ -103,6 +103,7 @@ resource "google_compute_instance" "elasticsearch" {
 
 export MASTER_LIST=${local.master_list}
 export BACKUP_REPOSITORY=${local.backup_repository}
+export PRE_START_CMD="${base64encode(var.custom_pre_start_commands)}"
 
 base64 -d <<< "${base64encode(local.elasticsearch_configuration)}" > /tmp/elasticsearch.yml
 base64 -d <<< "${base64encode(local.elasticsearch_fluentd)}" > /etc/google-fluentd/config.d/${var.cluster_name}.conf
