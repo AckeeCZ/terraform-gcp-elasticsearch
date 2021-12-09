@@ -20,12 +20,6 @@ locals {
       cluster_name = var.cluster_name
     }
   )
-  elasticsearch_fluentd = templatefile(
-    "${path.module}/fluentd.conf.tpl",
-    {
-      cluster_name = var.cluster_name
-    }
-  )
   master_list = join(",",
     [
       for i in range(var.node_count) :
@@ -95,6 +89,11 @@ resource "google_compute_instance" "elasticsearch" {
   network_interface {
     network = var.network
   }
+  labels = {
+    hostname     = "${var.instance_name}-${count.index}${local.suffix}"
+    project_id   = var.project
+    cluster_name = var.cluster_name
+  }
 
   metadata = {
     ssh-keys  = "devops:${tls_private_key.provision.public_key_openssh}"
@@ -106,7 +105,6 @@ export BACKUP_REPOSITORY=${local.backup_repository}
 export PRE_START_CMD="${base64encode(var.custom_pre_start_commands)}"
 
 base64 -d <<< "${base64encode(local.elasticsearch_configuration)}" > /tmp/elasticsearch.yml
-base64 -d <<< "${base64encode(local.elasticsearch_fluentd)}" > /etc/google-fluentd/config.d/${var.cluster_name}.conf
 base64 -d <<< "${google_service_account_key.elasticsearch_backup.private_key}" > /tmp/backup-sa.key
 base64 -d <<< "${filebase64("${path.module}/bootstrap.sh")}" > /tmp/bootstrap.sh
 
@@ -116,7 +114,6 @@ sed -i 's/^\\(-Xm[xs]\\).*/\\1${var.heap_size}/' /etc/elasticsearch/jvm.options
 rm /tmp/backup-sa.key
 bash /tmp/bootstrap.sh
 
-systemctl restart google-fluentd.service
 systemctl start elasticsearch.service
 
 ${var.custom_init_commands}

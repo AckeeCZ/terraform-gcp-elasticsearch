@@ -19,7 +19,7 @@ module "elasticsearch_prod" {
   cluster_token          = module.gke.access_token
   cluster_endpoint       = module.gke.endpoint
 
-  allowed_ipv4_subnets = [module.gke.cluster_ipv4_cidr]
+  allowed_ipv4_subnets = ["10.20.0.0/14"]
 }
 
 module "elasticsearch_second_prod" {
@@ -43,24 +43,35 @@ module "elasticsearch_second_prod" {
   cluster_token          = module.gke.access_token
   cluster_endpoint       = module.gke.endpoint
 
-  allowed_ipv4_subnets = [module.gke.cluster_ipv4_cidr]
+  allowed_ipv4_subnets = ["10.20.0.0/14"]
   add_random_suffix    = true
 
   load_balancer_subnetwork = "192.168.254.0/24"
 }
 
+module "cloud-nat" {
+  source        = "terraform-google-modules/cloud-nat/google"
+  version       = "~> 2.0"
+  project_id    = var.project
+  region        = var.region
+  create_router = true
+  network       = "default"
+  router        = "nat-router"
+}
+
 module "gke" {
-  source                = "AckeeCZ/vpc/gke"
-  version               = "11.0.0"
-  namespace             = var.namespace
-  project               = var.project
-  location              = var.zone
-  vault_secret_path     = var.vault_secret_path
-  private               = false
-  min_nodes             = 2
-  max_nodes             = 2
-  cluster_name          = "es-service-test"
-  enable_sealed_secrets = false
+  source                  = "AckeeCZ/vpc/gke"
+  version                 = "11.0.0"
+  namespace               = var.namespace
+  project                 = var.project
+  location                = var.zone
+  vault_secret_path       = var.vault_secret_path
+  private                 = true
+  min_nodes               = 2
+  max_nodes               = 2
+  cluster_name            = "es-service-test"
+  enable_sealed_secrets   = false
+  cluster_ipv4_cidr_block = "10.20.0.0/14"
 }
 
 variable "namespace" {
