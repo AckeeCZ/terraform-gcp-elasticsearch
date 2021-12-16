@@ -35,6 +35,11 @@ If you need some plugins that is required for index startup (e.g., [analysis-ste
 
 See Usage part above for example with `analysis-stempel` plugin installation
 
+## Upgrading to v12
+
+To keep ingesting Elasticsearch logs with the new Google Cloud Ops agent, please upgrade your ES instances to image generated from `v1.0.0` of the [packer-elasticsearch](https://github.com/AckeeCZ/packer-elasticsearch) 
+AFTER upgrading this module to `v12.0.0`
+
 ## Before you do anything in this module
 
 Install pre-commit hooks by running following commands:
