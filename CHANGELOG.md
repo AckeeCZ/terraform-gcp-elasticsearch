@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [v12.0.2] - 2022-02-23
+### Changed
+ - `elasticsearch-backup-cleanup` setup to use internal ip address due to [`alpine`](https://stackoverflow.com/questions/65181012/does-alpine-have-known-dns-issue-within-kubernetes) DNS issues
+
 ## [v12.0.1] - 2022-02-16
 ### Changed
  - `socat` setup to use internal ip address due to [`alpine`](https://stackoverflow.com/questions/65181012/does-alpine-have-known-dns-issue-within-kubernetes) DNS issues
