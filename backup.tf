@@ -29,7 +29,7 @@ resource "kubernetes_cron_job" "backup_cleanup" {
               command = [
                 "/bin/sh",
                 "-c",
-                "curl -s -XPOST http://${local.ilb_dns}:9200/_snapshot/${local.backup_repository}/_cleanup?pretty"
+                "curl -s -XPOST http://${google_compute_forwarding_rule.elasticsearch.ip_address}:9200/_snapshot/${local.backup_repository}/_cleanup?pretty"
               ]
             }
             restart_policy = "OnFailure"
