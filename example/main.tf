@@ -61,7 +61,7 @@ module "cloud-nat" {
 
 module "gke" {
   source                  = "AckeeCZ/vpc/gke"
-  version                 = "11.2.0"
+  version                 = "11.5.0"
   namespace               = var.namespace
   project                 = var.project
   location                = var.zone
