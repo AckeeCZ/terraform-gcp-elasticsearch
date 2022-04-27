@@ -8,7 +8,7 @@ module "elasticsearch_prod" {
   cluster_name           = "elasticsearch"
   node_count             = 2
   heap_size              = "1500m"
-  raw_image_source       = "https://storage.googleapis.com/ackee-images/ackee-elasticsearch-7-disk-1636542652.tar.gz"
+  raw_image_source       = "https://storage.googleapis.com/ackee-images/ackee-elasticsearch-8-disk-1651069402.tar.gz"
   data_disk_size         = "10"
   root_disk_size         = "20"
   backup_repository_name = "${var.project}-es1-backups"
@@ -31,7 +31,7 @@ module "elasticsearch_second_prod" {
   cluster_name             = "elasticsearch-2"
   node_count               = 2
   heap_size                = "1500m"
-  raw_image_source         = "https://storage.googleapis.com/ackee-images/ackee-elasticsearch-7-disk-1636542652.tar.gz"
+  raw_image_source         = "https://storage.googleapis.com/ackee-images/ackee-elasticsearch-8-disk-1651069402.tar.gz"
   data_disk_size           = "10"
   root_disk_size           = "20"
   backup_repository_name   = "${var.project}-es-manual-backups"
