@@ -90,7 +90,7 @@ No modules.
 | [google_service_account.elasticsearch_backup](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/service_account) | resource |
 | [google_service_account_key.elasticsearch_backup](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/service_account_key) | resource |
 | [google_storage_bucket.backup_repository](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/storage_bucket) | resource |
-| [kubernetes_cron_job.backup_cleanup](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/cron_job) | resource |
+| [kubernetes_cron_job_v1.backup_cleanup](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/cron_job_v1) | resource |
 | [kubernetes_stateful_set.elasticsearch](https://registry.terraform.io/providers/hashicorp/kubernetes/latest/docs/resources/stateful_set) | resource |
 | [random_string.es_name_suffix](https://registry.terraform.io/providers/hashicorp/random/latest/docs/resources/string) | resource |
 | [tls_private_key.provision](https://registry.terraform.io/providers/hashicorp/tls/latest/docs/resources/private_key) | resource |

@@ -6,7 +6,7 @@ resource "google_storage_bucket" "backup_repository" {
   count         = var.backup_repository_create ? 1 : 0
 }
 
-resource "kubernetes_cron_job" "backup_cleanup" {
+resource "kubernetes_cron_job_v1" "backup_cleanup" {
   metadata {
     name = "elasticsearch-backup${local.suffix}"
   }
