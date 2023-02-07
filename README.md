@@ -133,6 +133,7 @@ No modules.
 | <a name="input_namespace"></a> [namespace](#input\_namespace) | K8s namespace used to deploy endpoints and services. | `string` | `"production"` | no |
 | <a name="input_network"></a> [network](#input\_network) | GCE VPC used for compute instances | `string` | `"default"` | no |
 | <a name="input_node_count"></a> [node\_count](#input\_node\_count) | Number of ES nodes to deploy. | `number` | `1` | no |
+| <a name="input_node_roles"></a> [node\_roles](#input\_node\_roles) | Map of node roles. Index is instance number, starting at zero. If not defined, node has all roles | `map(any)` | `{}` | no |
 | <a name="input_project"></a> [project](#input\_project) | Name of GCP project. | `string` | n/a | yes |
 | <a name="input_raw_image_source"></a> [raw\_image\_source](#input\_raw\_image\_source) | URL of tar archive containing RAW source for ES image (you can use Packer image template to generate image, as mentioned above). | `string` | `"https://storage.googleapis.com/ackee-images/ackee-elasticsearch-7-disk-79.tar.gz"` | no |
 | <a name="input_region"></a> [region](#input\_region) | Region of GCP project. | `string` | n/a | yes |

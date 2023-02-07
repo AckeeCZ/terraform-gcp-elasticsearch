@@ -2,7 +2,9 @@ cluster:
   name: ${cluster_name}
 
 network.host: "0.0.0.0"
-
+%{ if node_roles != null }
+node.roles: [ ${node_roles} ]
+%{ endif }
 path:
   data: /var/lib/elasticsearch
   logs: /var/log/elasticsearch
