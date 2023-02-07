@@ -211,3 +211,9 @@ variable "backend_service_timeout_sec" {
   default     = 30
   type        = number
 }
+
+variable "node_roles" {
+  description = "Map of node roles. Index is instance number, starting at zero. If not defined, node has all roles"
+  default     = {}
+  type        = map(any)
+}

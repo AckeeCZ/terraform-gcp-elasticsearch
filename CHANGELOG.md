@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [v13.1.0] - 2023-02-07
+### Added
+- `node_roles` parameter allowing to define node roles, for more info see: [https://www.elastic.co/guide/en/elasticsearch/reference/8.6/modules-node.html]
+
 ## [v13.0.0] - 2022-04-27
 ### Changed
  - configuration to disable automatically enabled features in Elasticsearch 8 - this module is intended to run inside VPC, thus we don't need security features

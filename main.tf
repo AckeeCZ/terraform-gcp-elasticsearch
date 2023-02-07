@@ -12,14 +12,6 @@ resource "random_string" "es_name_suffix" {
 
 locals {
   zone_count = length(data.google_compute_zones.available.names)
-  elasticsearch_configuration = templatefile(
-    "${path.module}/elasticsearch.yml.tpl",
-    {
-      project      = var.project,
-      zones        = join(", ", data.google_compute_zones.available.names),
-      cluster_name = var.cluster_name
-    }
-  )
   master_list = join(",",
     [
       for i in range(var.node_count) :
@@ -96,7 +88,7 @@ resource "google_compute_instance" "elasticsearch" {
   }
 
   metadata = {
-    ssh-keys  = "devops:${tls_private_key.provision.public_key_openssh}"
+    ssh-keys = "devops:${tls_private_key.provision.public_key_openssh}"
     user-data = <<-EOT
 #!/bin/bash
 
@@ -104,7 +96,15 @@ export MASTER_LIST=${local.master_list}
 export BACKUP_REPOSITORY=${local.backup_repository}
 export PRE_START_CMD="${base64encode(var.custom_pre_start_commands)}"
 
-base64 -d <<< "${base64encode(local.elasticsearch_configuration)}" > /tmp/elasticsearch.yml
+base64 -d <<< "${base64encode(templatefile(
+    "${path.module}/elasticsearch.yml.tpl",
+    {
+      project      = var.project,
+      zones        = join(", ", data.google_compute_zones.available.names),
+      cluster_name = var.cluster_name,
+      node_roles   = lookup(var.node_roles, count.index, null),
+    }
+))}" > /tmp/elasticsearch.yml
 base64 -d <<< "${google_service_account_key.elasticsearch_backup.private_key}" > /tmp/backup-sa.key
 base64 -d <<< "${filebase64("${path.module}/bootstrap.sh")}" > /tmp/bootstrap.sh
 
@@ -119,14 +119,14 @@ systemctl start elasticsearch.service
 ${var.custom_init_commands}
 
   EOT
-  }
+}
 
-  service_account {
-    scopes = ["userinfo-email", "compute-ro", "storage-rw", "monitoring-write", "logging-write", "https://www.googleapis.com/auth/trace.append"]
-  }
+service_account {
+  scopes = ["userinfo-email", "compute-ro", "storage-rw", "monitoring-write", "logging-write", "https://www.googleapis.com/auth/trace.append"]
+}
 
-  # not sure if ok for production
-  allow_stopping_for_update = true
+# not sure if ok for production
+allow_stopping_for_update = true
 }
 
 resource "tls_private_key" "provision" {

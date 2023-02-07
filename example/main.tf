@@ -27,9 +27,13 @@ module "elasticsearch_second_prod" {
   project = var.project
   region  = var.region
 
-  instance_name            = "elasticsearch-prod-2"
-  cluster_name             = "elasticsearch-2"
-  node_count               = 2
+  instance_name = "elasticsearch-prod-2"
+  cluster_name  = "elasticsearch-2"
+  node_roles = {
+    0 = "master",
+    2 = "data,master"
+  }
+  node_count               = 3
   heap_size                = "1500m"
   raw_image_source         = "https://storage.googleapis.com/ackee-images/ackee-elasticsearch-8-disk-1651069402.tar.gz"
   data_disk_size           = "10"
